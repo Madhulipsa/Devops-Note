@@ -1,17 +1,18 @@
 
-      # Docker Fundamentals
+## Docker Fundamentals
+-----------------------------
 
 ## 1. What is Docker?
       
 ## 2. Why Do We Use Docker?
       
-# 3. How Does Docker Work?
+3. How Does Docker Work?
 
-# Docker – Why We Use It
-# 4. Dockerfile
-#docker image,
-#docker container,
-#docker registry
+## Docker – Why We Use It
+##  Dockerfile
+## docker image,
+## docker container,
+## docker registry
   # Docker Fundamentals
 ## Problem
 
