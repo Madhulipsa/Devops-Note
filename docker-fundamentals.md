@@ -82,7 +82,7 @@ Inside the container, we can define the environment required by the application,
 
 For example:
 
-```text
+
 Docker Container
 │
 ├── Application
