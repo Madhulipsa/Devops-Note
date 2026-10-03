@@ -15,86 +15,82 @@
 ## docker registry
   # Docker Fundamentals
 
-   Docker is a containerization tool that helps you build and run application without platform dependencies .
+ # Docker – Real-World Example
 
-## Problem
+## The Problem
 
- 
-Suppose a developer creates an application on a Windows laptop using **Python 3.9**.
+Suppose a developer creates an application on a **Windows laptop**.
 
-The application requires some specific:
+The application is developed using **Python 3.9**.
 
-* Python version
-* Libraries
-* Dependencies
-* System packages
-* Permissions/configurations
+The application also requires:
 
-The application works perfectly on the developer's machine because all the required things are available there.
+- A particular Python library
+- Some specific permissions
+- Specific dependencies
+- A specific environment configuration
 
-The developer thinks:
-
-> "If it works on my machine, it should work on my friend's/client's machine too."
-
-But the client may have a completely different environment.
+The application works perfectly on the developer's laptop.
 
 For example:
 
-* Developer's OS: Windows
-* Client's OS: Linux
-* Developer's Python: 3.9
-* Client's Python: 3.14
-* Required libraries may not be installed on the client system.
-* Required dependencies or configurations may be missing.
+- **OS:** Windows
+- **Python:** 3.9
+- **Username:** Admin
+- **Required libraries:** Available
+- **Required permissions:** Available
 
-Because of these differences, the application may work on the developer's machine but fail on the client machine.
+The developer thinks:
 
-## How Docker Solves This Problem
+> "If the application works on my machine, it should also work on my friend's machine."
 
-Docker helps us package an application together with its required environment and dependencies.
+But when the developer gives the application to his friend, it does not work.
 
-Inside a Docker-based environment, we can specify things such as:
+The friend's system is different:
 
-* Application code
-* Required Python version
-* Required libraries
-* Dependencies
-* System packages
-* Configuration
+- **OS:** Linux
+- **Python:** 3.14
+- **Username:** Shubham
+- **Required libraries:** Not installed
+- **Required dependencies:** Missing
+- **Environment:** Different
 
-We then create a **Docker Image** containing this setup.
+So the developer says:
 
-### Docker Image
+> "It works on my machine, but it does not work on the client's system."
 
-A Docker Image can be thought of as a **blueprint/template** for running the application.
+This is a common problem in software development.
 
-From this image, we can create a **Docker Container**.
+---
 
-### Docker Container
+# How Does Docker Solve This Problem?
 
-A container is a **running instance of a Docker image**.
+This is where **Docker** is useful.
 
-The application runs inside the container with the environment and dependencies defined by the image.
+Docker allows us to package an application together with its required environment and dependencies.
 
-## Simple Example
+We can create a **Docker Container** for the application.
+
+Inside the container, we can define the environment required by the application, such as:
+
+- Required OS-level environment
+- Required Python version
+- Required libraries
+- Required dependencies
+- Required configuration
+- Required permissions and access
+
+For example:
 
 ```text
-Developer Machine
-       ↓
-Python 3.9
-       ↓
-Required Libraries
-       ↓
-Application
-       ↓
-Docker Image
-       ↓
 Docker Container
-       ↓
-Client Machine
-       ↓
-Application Runs in the Container
-```
+│
+├── Application
+├── Python 3.9
+├── Required Libraries
+├── Required Dependencies
+├── Configuration
+└── Required Environment
 
 ## Important Terms
 ** Docker engine:**
