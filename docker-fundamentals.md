@@ -3,6 +3,8 @@
 -----------------------------
 
 ## 1. What is Docker?
+
+Docker is a containerized tool , that help you build and run applications without  platform dependencies .
       
 ## 2. Why Do We Use Docker?
       
