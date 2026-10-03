@@ -95,9 +95,13 @@ Docker Container
 ## Important Terms
 ** Docker engine:**
 Docker is an engine that runs containerd.
+
 It uses core container technology to create, manage, and run containers.
+
 To access and manage these containers, the Docker daemon runs in the background.
+
 The Docker client is the command-line interface (CLI) through which the user gives commands to Docker.
+
 Docker Registry is also a part of the Docker ecosystem. It is used to store and distribute Docker images.
 
 ## why not vertulization - 
