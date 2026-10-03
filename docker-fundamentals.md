@@ -93,7 +93,8 @@ Docker Container
 └── Required Environment
 
 ## Important Terms
-** Docker engine:**
+** Docker engine: **
+
 Docker is an engine that runs containerd.
 
 It uses core container technology to create, manage, and run containers.
