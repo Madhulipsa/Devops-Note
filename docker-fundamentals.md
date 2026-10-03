@@ -118,7 +118,7 @@ A running instance created from a Docker image.
 *  multiple os images insatalled 
 *  storage cost increaded 
 
-## why containerization-
+## why containerization(Docker)-
 
 *  shared resources
 *  resources utilization 
