@@ -6,7 +6,7 @@
       
 ## 2. Why Do We Use Docker?
       
-3. How Does Docker Work?
+##3. How Does Docker Work?
 
 ## Docker – Why We Use It
 ##  Dockerfile
