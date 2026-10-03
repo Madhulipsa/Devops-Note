@@ -123,3 +123,9 @@ Docker Registry is also a part of the Docker ecosystem. It is used to store and 
 
 ## Does docker contaciner have an os of there own ?
 * NO , docker container donot have their own os .
+
+# Docker Engine
+* containerd(core container technology)
+* dockerd(docker daemon)
+* docker client (user gives commands )
+* Docker registry
