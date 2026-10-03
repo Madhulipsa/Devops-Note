@@ -14,8 +14,12 @@
 ## docker container,
 ## docker registry
   # Docker Fundamentals
+
+   Docker is a containerization tool that helps you build and run application without platform dependencies .
+
 ## Problem
 
+ 
 Suppose a developer creates an application on a Windows laptop using **Python 3.9**.
 
 The application requires some specific:
