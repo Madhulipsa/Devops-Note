@@ -113,15 +113,15 @@ A running instance created from a Docker image.
 
 ## why not vertulization - 
 * 1. dedicated resources 
-* 2.resources wasteages 
+* 2. resources wasteages 
 * 3. host has hypervisior installed 
-*4.multiple os images insatalled 
-* 5.storage cost increaded 
+* 4. multiple os images insatalled 
+* 5. storage cost increaded 
 
 ## why containerization-
 
-* 1.shared resources
-* 2.resources utilization 
+* 1. shared resources
+* 2. resources utilization 
 * 3. docker engine takes the host OS
 * in window (docker desktop)
 
