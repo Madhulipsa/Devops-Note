@@ -97,19 +97,11 @@ Application Runs in the Container
 ```
 
 ## Important Terms
-
-**Docker:**
-A platform/tool used to package and run applications in containers.
-
-**Docker Image:**
-A blueprint/template containing the application and its required environment.
-
-**Docker Container:**
-A running instance created from a Docker image.
-
-## Main Idea
-
-> **Docker helps solve the "It works on my machine" problem by packaging an application with its required dependencies and providing a consistent environm**
+** Docker engine:**
+Docker is an engine that runs containerd. It uses core container technology to create, manage, and run containers.
+To access and manage these containers, the Docker daemon runs in the background.
+The Docker client is the command-line interface (CLI) through which the user gives commands to Docker.
+Docker Registry is also a part of the Docker ecosystem. It is used to store and distribute Docker images.
 
 ## why not vertulization - 
 *  dedicated resources 
@@ -125,3 +117,5 @@ A running instance created from a Docker image.
 *  docker engine takes the host OS
 * in window (docker desktop)
 
+## Does docker contaciner have an os of there own ?
+* NO , docker container donot have their own os .
