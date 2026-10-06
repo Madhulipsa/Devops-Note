@@ -147,53 +147,126 @@ The process of creating and running applications in containers is called **conta
 
 **docker search**  is a Docker command used to search for Docker images on Docker Hub.
 
-docker run hello-world — Here, hello-world is the image name.
-The docker run command creates a container from the image and runs the container.
-In simple words:
+# Docker Notes
 
-Docker Image → Container → Application runs inside the container.
+## Docker Image → Container → Application
 
+```bash
+docker run hello-world
+```
+
+Here, `hello-world` is the image name.
+
+The `docker run` command creates a container from the image and runs the container.
+
+### In simple words:
+
+```text
+Docker Image → Container → Application runs inside the container
+```
+
+---
+
+## docker run -it ubuntu bash
+
+```bash
 docker run -it ubuntu bash
+```
 
 Docker client sends the command to the Docker daemon.
-docker run creates a container from the specified image and starts it.
--it means interactive terminal (-i = interactive, -t = terminal).
-ubuntu is the Docker image name.
-bash is the command that runs inside the container.
-In simple flow:
 
+`docker run` creates a container from the specified image and starts it.
+
+`-it` means interactive terminal:
+
+* `-i` = interactive
+* `-t` = terminal
+
+`ubuntu` is the Docker image name.
+
+`bash` is the command that runs inside the container.
+
+### In simple flow:
+
+```text
 Docker Client → Docker Daemon → Ubuntu Image → Container → Bash Shell
+```
 
+A command can run on any system that supports Docker.
 
-A command can run on any system that supports Docker. You can run an Ubuntu container locally using Docker.
+You can run an Ubuntu container locally using Docker.
 
+---
 
-for EC2
+# For EC2
 
-docker ps-- permision denaid
-sudo usermod -aG docker $USER
-newdrp docker
+```bash
 docker ps
-------
-docker run -it ubantu bash
-run.....
+```
 
+If you get:
 
-Task 1: Create a Container from an Image
+```text
+permission denied
+```
+
+Run:
+
+```bash
+sudo usermod -aG docker $USER
+```
+
+Then:
+
+```bash
+newgrp docker
+```
+
+Now:
+
+```bash
+docker ps
+```
+
+---
+
+## Run Ubuntu Container
+
+```bash
+docker run -it ubuntu bash
+```
+
+Run the command and enter inside the Ubuntu container.
+
+---
+
+# Task 1: Create a Container from an Image
 
 First, search for the Nginx image on Docker Hub:
 
+```bash
 docker search nginx
+```
 
 Then, create and run a container from the Nginx image:
 
+```bash
 docker run nginx
+```
 
-Flow:
+### Flow:
 
+```text
 Docker Hub → Nginx Image → docker run nginx → Nginx Container
+```
 
-Docker containers are **isolated environments**. By default, services running inside a container are not directly accessible from outside the container.
+---
+
+# Docker Port Mapping
+
+Docker containers are **isolated environments**.
+
+By default, services running inside a container are not directly accessible from outside the container.
 
 If we want to make a container's application accessible through the host machine, we can use **port mapping**.
 
@@ -209,67 +282,105 @@ Here:
 * **Second `80`** = Container port
 * **`nginx`** = Image name
 
-This maps **Host Port 80 → Container Port 80**, allowing users to access the Nginx application through the host.
+This maps:
+
+```text
+Host Port 80 → Container Port 80
+```
+
+allowing users to access the Nginx application through the host.
 
 **Important:** Port mapping is used for **network access/communication**, not for sharing general resources.
-Simple flow:
+
+### Simple flow:
+
+```text
 User → Host Port 80 → Container Port 80 → Nginx
+```
 
+---
 
-If you want the container to run in detached mode (in the background), use the -d option.
+# Detached Mode
+
+If you want the container to run in detached mode (in the background), use the `-d` option.
 
 Example:
 
+```bash
 docker run -d -p 80:80 nginx
--d → Detached mode (runs in the background)
--p 80:80 → Maps host port 80 to container port 80
-nginx → Image name
+```
 
+* `-d` → Detached mode (runs in the background)
+* `-p 80:80` → Maps host port 80 to container port 80
+* `nginx` → Image name
 
-If you want to give the container a custom name, use the --name option.
+---
 
+# Custom Container Name
+
+If you want to give the container a custom name, use the `--name` option.
+
+```bash
 docker run -d -p 80:80 --name nginx-demo nginx
+```
 
 Here:
 
--d → Runs the container in detached mode
--p 80:80 → Maps host port 80 to container port 80
---name nginx-demo → Gives the container the name nginx-demo
-nginx → Image name
+* `-d` → Runs the container in detached mode
+* `-p 80:80` → Maps host port 80 to container port 80
+* `--name nginx-demo` → Gives the container the name `nginx-demo`
+* `nginx` → Image name
 
-Flow:
-nginx Image → nginx-demo Container → Port 80 → Nginx
+### Flow:
 
+```text
+Nginx Image → nginx-demo Container → Port 80 → Nginx
+```
 
-example--
+---
 
-f you mean docker run -e MYSQL_..., then -e is used to set an environment variable inside the container.
+# Environment Variable `-e`
+
+If you mean `docker run -e MYSQL_...`, then `-e` is used to set an environment variable inside the container.
 
 For example:
 
+```bash
 docker run -e MYSQL_ROOT_PASSWORD=1234 mysql
+```
 
 Here:
 
-docker run → Creates and starts a container
--e → Sets an environment variable
-MYSQL_ROOT_PASSWORD=1234 → Sets the MySQL root password
-mysql → MySQL Docker image
-Important: -e tabhi useful hai jab application/image us environment variable ko read karti ho.
+* `docker run` → Creates and starts a container
+* `-e` → Sets an environment variable
+* `MYSQL_ROOT_PASSWORD=1234` → Sets the MySQL root password
+* `mysql` → MySQL Docker image
 
+**Important:** `-e` tabhi useful hai jab application/image us environment variable ko read karti ho.
 
+---
+
+# docker ps
+
+`docker ps` command se currently running containers ki list dekh sakte hain.
+
+```bash
 docker ps
+```
 
-docker ps command se currently running containers ki list dekh sakte hain.
+---
 
-docker ps
-docker stop
+# docker stop
 
-docker stop command se running container ko stop karte hain.
+`docker stop` command se running container ko stop karte hain.
 
+```bash
 docker stop nginx-demo
+```
 
-Simple flow:
+### Simple flow:
+
+```text
 docker ps
    ↓
 Running containers dekho
@@ -277,33 +388,35 @@ Running containers dekho
 docker stop nginx-demo
    ↓
 Container stop ho gaya
+```
 
+---
 
-Extra: Sabhi containers dekhne ke liye, including stopped containers:
+# docker ps -a
 
+Sabhi containers dekhne ke liye, including stopped containers:
+
+```bash
 docker ps -a
+```
 
+---
 
-docker rm
+# docker rm
 
-docker rm command se stopped container ko delete/remove karte hain.
+`docker rm` command se stopped container ko delete/remove karte hain.
 
 Example:
 
+```bash
 docker rm nginx-demo
+```
 
-Yahan nginx-demo container ka name hai.
+Yahan `nginx-demo` container ka name hai.
 
-docker ps
+### Simple flow:
 
-docker ps se running containers ki list dekhte hain:
-
-docker ps
-
-Stopped containers bhi dekhne ke liye:
-
-docker ps -a
-Simple flow:
+```text
 docker ps
    ↓
 Running container dekho
@@ -315,37 +428,62 @@ Container stop
 docker rm nginx-demo
    ↓
 Container delete
+```
 
-Important: docker rm image ko delete nahi karta, sirf container ko delete karta hai.
+**Important:** `docker rm` image ko delete nahi karta, sirf container ko delete karta hai.
 
+---
 
-ocker kill
+# docker kill
 
-docker kill command se running container ko immediately forcefully stop karte hain.
+`docker kill` command se running container ko immediately forcefully stop karte hain.
 
+```bash
 docker kill nginx-demo
+```
 
-Yahan nginx-demo container ka name hai.
+Yahan `nginx-demo` container ka name hai.
 
-docker stop vs docker kill
-docker stop → Container ko gracefully stop karta hai; application ko shutdown hone ka time milta hai.
-docker kill → Container ko immediately forcefully stop karta hai.
+## docker stop vs docker kill
 
-Simple:
+`docker stop` → Container ko gracefully stop karta hai; application ko shutdown hone ka time milta hai.
+
+`docker kill` → Container ko immediately forcefully stop karta hai.
+
+### Simple:
+
+```text
 docker stop = normal stop
 docker kill = force stop
+```
 
+---
 
-We start with the source code of an application. Using Docker, we build the application into a Docker image.
+# Complete Docker Application Flow
+
+We start with the source code of an application.
+
+Using Docker, we build the application into a Docker image.
 
 The ultimate goal is to run the application.
 
-The application runs inside a Docker container. A container is created from a Docker image, and a Docker image is built using a Dockerfile.
+The application runs inside a Docker container.
 
-Docker Flow
+A container is created from a Docker image, and a Docker image is built using a Dockerfile.
 
+## Docker Flow
+
+```text
 Source Code → Dockerfile → Docker Image → Docker Container → Application Runs
+```
 
-In simple words:
+### In simple words:
 
-Dockerfile builds the image → Image creates the container → Application runs inside the container.
+```text
+Dockerfile builds the image
+        ↓
+Image creates the container
+        ↓
+Application runs inside the container
+```
+
