@@ -487,3 +487,392 @@ Image creates the container
 Application runs inside the container
 ```
 
+# Deploy an Application Using Docker
+
+## Ultimate Goal
+
+Humein ek application ko Docker ki help se deploy karna hai.
+
+Sabse pehle humein **application ka source code** chahiye.
+
+Us source code ko Docker ki help se **build** karna hai.
+
+Ultimate aim:
+
+```text
+Application Code
+       ↓
+Dockerfile
+       ↓
+Docker Image
+       ↓
+Docker Container
+       ↓
+Application Runs
+```
+
+### Simple Concept
+
+> **Dockerfile se Image banti hai → Image se Container banta hai → Container ke andar Application run hoti hai.**
+
+---
+
+# Step 1: Create a Directory
+
+Sabse pehle ek directory banayenge.
+
+```bash
+mkdir python
+```
+
+Directory ke andar jayenge:
+
+```bash
+cd python
+```
+
+Check karne ke liye:
+
+```bash
+ls
+```
+
+---
+
+# Step 2: Get Application Code from GitHub
+
+Ab humein GitHub se application ka source code lena hai.
+
+GitHub repository ko HTTP/HTTPS ke through clone karenge:
+
+```bash
+git clone <https-url>
+```
+
+Example:
+
+```bash
+git clone https://github.com/username/application.git
+```
+
+Enter press karne ke baad GitHub ka code system mein aa jayega.
+
+### Flow
+
+```text
+GitHub
+   ↓
+git clone <https-url>
+   ↓
+Application Source Code
+   ↓
+Local Machine / EC2
+```
+
+---
+
+# Step 3: Application Code Check
+
+Code clone hone ke baad application directory mein jayenge:
+
+```bash
+cd application
+```
+
+Files check karne ke liye:
+
+```bash
+ls
+```
+
+Ab humein application ka code mil gaya.
+
+```text
+Application Source Code
+        ↓
+     We have Code
+        ↓
+Now we need to build it using Docker
+```
+
+---
+
+# Step 4: Create Dockerfile
+
+Sabse pehle Dockerfile banayenge.
+
+```bash
+vim Dockerfile
+```
+
+Dockerfile ke andar hum application ko build karne ke instructions denge.
+
+---
+
+# Step 5: Dockerfile
+
+Example:
+
+```dockerfile
+# Bring Patila (Base Image)
+FROM python:3.14
+
+# Work inside /app
+WORKDIR /app
+
+# Add Doodh + Pani + Chai Patti
+# Copy application code
+COPY . .
+
+# Add Chini + Elaichi + Adrak
+# Install dependencies
+RUN pip install -r requirements.txt
+
+# Chai kaha milegi?
+# Which port will this application run on?
+EXPOSE 80
+
+# Gas ON - Run the application
+CMD ["python", "run.py"]
+```
+
+---
+
+# Dockerfile Explanation Using Chai Example ☕
+
+## 1. FROM
+
+```dockerfile
+FROM python:3.14
+```
+
+### Chai Example
+
+```text
+Patila
+  ↓
+Python 3.14 Base Image
+```
+
+`FROM` tells Docker which **base image** to use.
+
+Here:
+
+```text
+python:3.14
+```
+
+is the base image.
+
+---
+
+# 2. WORKDIR
+
+```dockerfile
+WORKDIR /app
+```
+
+This tells Docker that `/app` will be the working directory inside the container.
+
+### Chai Example
+
+```text
+Patila ke andar kaam karne ki jagah
+        ↓
+       /app
+```
+
+---
+
+# 3. COPY
+
+```dockerfile
+COPY . .
+```
+
+This copies the application source code into the Docker image.
+
+### COPY Syntax
+
+```text
+COPY <source> <destination>
+```
+
+Here:
+
+```text
+Source      → .
+Destination → .
+```
+
+### Chai Example
+
+```text
+Doodh + Pani + Chai Patti
+        ↓
+Application Code
+        ↓
+COPY . .
+```
+
+---
+
+# 4. RUN
+
+```dockerfile
+RUN pip install -r requirements.txt
+```
+
+This installs the dependencies required by the application.
+
+### Chai Example
+
+```text
+Chini
+Elaichi
+Adrak
+   ↓
+Application Dependencies
+   ↓
+RUN pip install -r requirements.txt
+```
+
+`requirements.txt` contains the Python packages/dependencies required by the application.
+
+---
+
+# 5. EXPOSE
+
+```dockerfile
+EXPOSE 80
+```
+
+This tells Docker that the application is intended to listen on port `80`.
+
+### Chai Example
+
+```text
+Chai kaha milegi?
+        ↓
+Port 80
+```
+
+So:
+
+```text
+EXPOSE 80
+↓
+Application Port
+```
+
+---
+
+# 6. CMD
+
+```dockerfile
+CMD ["python", "run.py"]
+```
+
+This tells Docker what command to run when the container starts.
+
+### Chai Example
+
+```text
+Gas ON 🔥
+    ↓
+Chai banana start
+    ↓
+Application Run
+```
+
+Here:
+
+```text
+python run.py
+```
+
+runs the Python application.
+
+> `run.py` is the entry point provided by the developer/application.
+
+---
+
+# Complete Chai → Docker Concept ☕
+
+```text
+                 CHAI RECIPE
+                     ↓
+        ┌─────────────────────────┐
+        │ FROM python:3.14        │
+        │ Patila                  │
+        └─────────────────────────┘
+                     ↓
+        ┌─────────────────────────┐
+        │ WORKDIR /app            │
+        │ Kaam karne ki jagah     │
+        └─────────────────────────┘
+                     ↓
+        ┌─────────────────────────┐
+        │ COPY . .                │
+        │ Doodh + Pani + Patti    │
+        └─────────────────────────┘
+                     ↓
+        ┌─────────────────────────┐
+        │ RUN pip install         │
+        │ Chini + Elaichi + Adrak │
+        └─────────────────────────┘
+                     ↓
+        ┌─────────────────────────┐
+        │ EXPOSE 80               │
+        │ Chai kaha milegi?       │
+        └─────────────────────────┘
+                     ↓
+        ┌─────────────────────────┐
+        │ CMD ["python","run.py"] │
+        │ Gas ON 🔥               │
+        └─────────────────────────┘
+                     ↓
+              APPLICATION RUNS
+```
+
+---
+
+# Complete Docker Deployment Flow
+
+```text
+GitHub
+   ↓
+git clone <https-url>
+   ↓
+Application Source Code
+   ↓
+vim Dockerfile
+   ↓
+Write Dockerfile
+   ↓
+docker build
+   ↓
+Docker Image
+   ↓
+docker run
+   ↓
+Docker Container
+   ↓
+Application Runs
+```
+
+## Ultimate Aim
+
+```text
+Source Code
+     ↓
+Dockerfile
+     ↓
+Docker Image
+     ↓
+Docker Container
+     ↓
+Application Runs Inside Container
+```
+
+> **Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
