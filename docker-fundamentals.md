@@ -1234,3 +1234,83 @@ Application Runs Inside Container
 ```
 
 > **Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
+
+
+# 🚀 Docker Advanced Concepts
+
+After learning Docker fundamentals, the next important concepts are:
+
+```text
+Docker Advanced Concepts
+│
+├── Multi-Stage Dockerfile
+├── Docker Volumes
+├── Docker Networking
+├── Docker Compose
+└── Docker Model Runner
+    └── AI Models with Docker
+```
+
+---
+
+# 1. Multi-Stage Dockerfile
+
+## Why Do We Use Multi-Stage Builds?
+
+A Docker image may require many dependencies and tools during the **build process**.
+
+After the application is built, many of those dependencies are no longer required to run the application.
+
+Multi-stage builds separate the process into different stages:
+
+```text
+Stage 1 → Build the Application
+Stage 2 → Run the Application
+```
+
+### Simple Concept
+
+```text
+Source Code
+     ↓
+Stage 1: Builder
+     ↓
+Build Application
+     ↓
+Build Output
+     ↓
+Stage 2: Runner
+     ↓
+Run Application
+```
+
+---
+
+# Stage 1: Builder
+
+For a Node.js/Vite frontend application:
+
+```dockerfile
+# -------------------------
+# Stage 1: Builder
+# -------------------------
+
+FROM node:24-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy application source code
+COPY . .
+
+# Build application
+RUN npm run build
+```
+
+After the build, Vite normally creat
+
