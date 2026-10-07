@@ -834,7 +834,70 @@ runs the Python application.
                      ↓
               APPLICATION RUNS
 ```
+Step 6: Build Docker Image
 
+Dockerfile ke basis par image banayenge:
+
+docker build -t devboard .
+Breakdown
+docker build
+     ↓
+Docker image build karo
+
+-t devboard
+     ↓
+Image ka naam = devboard
+
+.
+     ↓
+Current directory mein Dockerfile use karo
+
+Check image:
+
+docker images
+Step 7: Run Docker Container
+
+Agar application port 80 par run kar rahi hai:
+
+docker run -p 80:80 -d devboard
+Meaning
+-p 80:80
+
+Host Port       Container Port
+    80     →        80
+
+Check running container:
+
+docker ps
+🌐 Application ko IP Address se Access Karna
+
+Agar application ko sirf localhost par nahi, balki server/EC2 ke IP address se access karna hai, application ko 0.0.0.0 par bind karna zaroori hai.
+
+Example:
+
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+Agar application port 5173 use karti hai:
+
+docker run -p 5173:5173 -d devboard
+
+Then:
+
+http://YOUR-IP:5173
+
+Example:
+
+http://13.234.56.78:5173
+
+For port 80:
+
+docker run -p 80:80 -d devboard
+
+Then:
+
+http://YOUR-IP
+
+AWS EC2 use kar rahe ho to required port ko Security Group mein allow karna bhi zaroori hai.
 ---
 
 # Complete Docker Deployment Flow
