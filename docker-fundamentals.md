@@ -1101,6 +1101,97 @@ EC2 :5173
      ↓
 http://EC2-PUBLIC-IP:5173
 ```
+# Step 8: Run Docker Container
+
+Docker image `devboard` se container start karenge.
+
+```bash
+docker run -d -p 5173:5173 devboard
+```
+
+### Command Breakdown
+
+```text
+docker run
+    ↓
+Create and start a container
+
+-d
+    ↓
+Run container in background (Detached Mode)
+
+-p 5173:5173
+    ↓
+Host Port 5173 → Container Port 5173
+
+devboard
+    ↓
+Docker Image Name
+```
+
+---
+
+# Step 9: Check Running Container
+
+Container successfully running hai ya nahi check karne ke liye:
+
+```bash
+docker ps
+```
+
+Expected output:
+
+```text
+CONTAINER ID   IMAGE      PORTS
+xxxxxxxxxxxx   devboard   0.0.0.0:5173->5173/tcp
+```
+
+### Port Mapping
+
+```text
+Host / EC2 Port       Container Port
+       5173      →          5173
+```
+
+---
+
+# 🌐 Access Application
+
+Agar application AWS EC2 par running hai:
+
+```text
+http://YOUR-EC2-PUBLIC-IP:5173
+```
+
+Example:
+
+```text
+http://13.234.56.78:5173
+```
+
+### Complete Flow
+
+```text
+Dockerfile
+    ↓
+docker build -t devboard .
+    ↓
+Docker Image
+    ↓
+docker run -d -p 5173:5173 devboard
+    ↓
+Docker Container
+    ↓
+EC2 Port 5173
+    ↓
+EC2 Public IP
+    ↓
+Browser
+    ↓
+Application
+```
+
+> **Important:** Application ko external IP se access karne ke liye app ko `0.0.0.0` par listen karna chahiye, aur AWS EC2 Security Group mein port `5173` allow hona chahiye.
 
 ---
 
