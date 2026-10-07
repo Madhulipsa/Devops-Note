@@ -834,12 +834,17 @@ runs the Python application.
                      ↓
               APPLICATION RUNS
 ```
-Step 6: Build Docker Image
+# Step 6: Build Docker Image
 
-Dockerfile ke basis par image banayenge:
+Dockerfile ke basis par Docker image banayenge:
 
+```bash
 docker build -t devboard .
-Breakdown
+```
+
+### Breakdown
+
+```text
 docker build
      ↓
 Docker image build karo
@@ -851,53 +856,252 @@ Image ka naam = devboard
 .
      ↓
 Current directory mein Dockerfile use karo
+```
 
-Check image:
+### Check Docker Image
 
+```bash
 docker images
-Step 7: Run Docker Container
+```
 
-Agar application port 80 par run kar rahi hai:
+Expected:
 
+```text
+REPOSITORY    TAG       IMAGE ID       CREATED       SIZE
+devboard      latest    xxxxxxxxxxxx   ...           ...
+```
+
+---
+
+# Step 7: Run Docker Container
+
+Agar application **container ke andar port 80** par run kar rahi hai:
+
+```bash
 docker run -p 80:80 -d devboard
-Meaning
+```
+
+### Port Mapping
+
+```text
 -p 80:80
 
-Host Port       Container Port
-    80     →        80
+Host Port          Container Port
+    80       →          80
+```
 
-Check running container:
+### Meaning
 
+```text
+Browser
+   ↓
+Host / EC2 Port 80
+   ↓
+Docker Port Mapping
+   ↓
+Container Port 80
+   ↓
+Application
+```
+
+### Check Running Container
+
+```bash
 docker ps
-🌐 Application ko IP Address se Access Karna
+```
 
-Agar application ko sirf localhost par nahi, balki server/EC2 ke IP address se access karna hai, application ko 0.0.0.0 par bind karna zaroori hai.
+---
 
-Example:
+# 🌐 Access Application Using IP Address
 
+Agar application ko **localhost ke bajay server/EC2 ke IP address** se access karna hai, application ko `0.0.0.0` par bind karna zaroori hai.
+
+### Example: Node.js / Vite Application
+
+```dockerfile
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+```
 
-Agar application port 5173 use karti hai:
+`0.0.0.0` ka meaning hai:
 
+```text
+Application
+     ↓
+Listen on all network interfaces
+     ↓
+Can be accessed through server IP
+```
+
+---
+
+# 🚀 If Application Uses Port 5173
+
+Agar application **container ke andar port 5173** par run kar rahi hai:
+
+```bash
 docker run -p 5173:5173 -d devboard
+```
 
-Then:
+Ab server ke IP se access kar sakte ho:
 
+```text
 http://YOUR-IP:5173
+```
 
 Example:
 
+```text
 http://13.234.56.78:5173
+```
+
+### Flow
+
+```text
+Browser
+   ↓
+http://YOUR-IP:5173
+   ↓
+Server Port 5173
+   ↓
+Docker
+   ↓
+Container Port 5173
+   ↓
+Application
+```
+
+---
+
+# 🌐 If Application Uses Port 80
+
+Agar application **container ke andar port 80** par run kar rahi hai:
+
+```bash
+docker run -p 80:80 -d devboard
+```
+
+Access:
+
+```text
+http://YOUR-IP
+```
+
+Example:
+
+```text
+http://13.234.56.78
+```
+
+### Flow
+
+```text
+Browser
+   ↓
+http://YOUR-IP
+   ↓
+Server Port 80
+   ↓
+Docker
+   ↓
+Container Port 80
+   ↓
+Application
+```
+
+---
+
+# ⚠️ Important: `EXPOSE` vs `-p`
+
+Dockerfile mein:
+
+```dockerfile
+EXPOSE 80
+```
+
+sirf ye document karta hai ki application **port 80 use karti hai**.
+
+Ye port ko automatically public nahi karta.
+
+Port publish karne ke liye:
+
+```bash
+docker run -p 80:80 -d devboard
+```
+
+use karna hota hai.
+
+```text
+EXPOSE 80
+     ↓
+Container Port Information
+
+-p 80:80
+     ↓
+Actually Port Publish / Map
+```
+
+---
+
+# ☁️ AWS EC2 Important
+
+Agar application AWS EC2 par chal rahi hai, to EC2 **Security Group** mein required port allow karna hoga.
 
 For port 80:
 
-docker run -p 80:80 -d devboard
+```text
+Inbound Rule
+    ↓
+Type: HTTP
+Port: 80
+Source: Required IP / 0.0.0.0/0
+```
 
-Then:
+For port 5173:
 
-http://YOUR-IP
+```text
+Inbound Rule
+    ↓
+Custom TCP
+Port: 5173
+Source: Required IP / 0.0.0.0/0
+```
 
-AWS EC2 use kar rahe ho to required port ko Security Group mein allow karna bhi zaroori hai.
+---
+
+# 🧠 Final Concept
+
+```text
+Application
+     ↓
+0.0.0.0
+     ↓
+Container Port
+     ↓
+docker run -p
+     ↓
+Host / EC2 Port
+     ↓
+EC2 Public IP
+     ↓
+Browser
+```
+
+### Example
+
+```text
+Application
+     ↓
+0.0.0.0:5173
+     ↓
+Docker Container
+     ↓
+-p 5173:5173
+     ↓
+EC2 :5173
+     ↓
+http://EC2-PUBLIC-IP:5173
+```
+
 ---
 
 # Complete Docker Deployment Flow
