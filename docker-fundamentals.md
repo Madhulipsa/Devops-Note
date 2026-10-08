@@ -1236,411 +1236,185 @@ Application Runs Inside Container
 > **Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
 
 
-🚀 Docker Advanced Concepts
 
-After learning Docker fundamentals, the next important concepts are:
+# 🚀 Advanced Docker Concepts
 
-Docker Advanced Concepts
-│
-├── Multi-Stage Dockerfile
-├── Docker Volumes
-├── Docker Networking
-├── Docker Compose
-└── Docker Model Runner
-    └── AI Models with Docker
-1. Multi-Stage Dockerfile
-Why Do We Use Multi-Stage Builds?
+The following are the key **advanced Docker concepts**:
 
-A Docker image may require many dependencies and tools during the build process.
+- 🏗️ **Multi-Stage Dockerfile**
+- 💾 **Docker Volumes**
+- 🌐 **Docker Networking**
+- 🧩 **Docker Compose**
+- 🤖 **Docker Model Runner**
+- 🧠 **AI Models on Docker**
 
-After the application is built, many of those dependencies are no longer required to run the application.
+  # 🐳 Multi-Stage Dockerfile
 
-Multi-stage builds separate the process into different stages:
+Multi-stage Docker builds use **multiple stages** to build and run an application efficiently.
 
-Stage 1 → Build the Application
-Stage 2 → Run the Application
-Simple Concept
-Source Code
-     ↓
-Stage 1: Builder
-     ↓
-Build Application
-     ↓
-Build Output
-     ↓
-Stage 2: Runner
-     ↓
-Run Application
-Stage 1: Builder
+---
 
-For a Node.js/Vite frontend application:
+## 🔹 Stage 1 — Builder Stage
 
-# -------------------------
-# Stage 1: Builder
-# -------------------------
+### 1. Bring the Base Image
 
-FROM node:24-alpine AS builder
+```dockerfile
+FROM python:3.14 AS builder
 
+This uses the Python 3.14 image as the base image.
+
+2. Create and Set the Working Directory
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+This creates the /app directory and sets it as the current working directory.
+
+3. Copy Application Code
+COPY . .
+
+This copies all the application files from the current directory into /app.
+
+4. Install Dependencies
+RUN pip install -r requirements.txt
+
+This installs all the packages/dependencies listed in requirements.txt.
+
+5. Build the Application
+
+After installing the dependencies, run the build command:
+
+python.py build
+
+The build process creates a folder called:
+
+/dist
+
+At this point, Stage 1 — Builder Stage is complete.
+
+🔹 Stage 2 — Runner Stage
+
+The second stage is used to run the application.
+
+1. Use Node.js Alpine Image
+FROM node:24-alpine AS runner
+
+This uses the lightweight Node.js 24 Alpine image.
+
+2. Set Working Directory
+WORKDIR /app
+
+The application will run from the /app directory.
+
+3. Copy package.json
+COPY package.json .
+
+This copies the package.json file into the container.
+
+4. Install Vite
+RUN npm install -g vite
+
+This installs Vite globally inside the container.
+
+5. Copy Build Files from Builder Stage
+COPY --from=builder /app/dist ./dist
+
+This copies only the dist folder from the builder stage into the runner stage.
+
+📄 Complete Multi-Stage Dockerfile
+# -------------------------------
+# Stage 1: Builder
+# -------------------------------
+
+FROM python:3.14 AS builder
+
+# Create /app and set it as working directory
+WORKDIR /app
+
+# Copy application code
+COPY . .
 
 # Install dependencies
-RUN npm install
-
-# Copy application source code
-COPY . .
+RUN pip install -r requirements.txt
 
 # Build application
-RUN npm run build
+RUN python.py build
 
-After the build, Vite normally creates:
 
-/app/dist
-Builder Flow
-Source Code
-     ↓
-npm install
-     ↓
-npm run build
-     ↓
-/app/dist
-Stage 2: Runner
-
-For a production frontend application, we can use Nginx to serve the generated static files.
-
-# -------------------------
+# -------------------------------
 # Stage 2: Runner
-# -------------------------
+# -------------------------------
 
-FROM nginx:alpine AS runner
+FROM node:24-alpine AS runner
 
-# Copy build output from builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-Complete Multi-Stage Dockerfile
-# -------------------------
-# Stage 1: Builder
-# -------------------------
-
-FROM node:24-alpine AS builder
-
+# Set working directory
 WORKDIR /app
 
-COPY package*.json ./
+# Copy package.json
+COPY package.json .
 
-RUN npm install
+# Install Vite
+RUN npm install -g vite
 
-COPY . .
+# Copy build output from builder stage
+COPY --from=builder /app/dist ./dist
 
-RUN npm run build
+# Start application
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5174"]
+🐳 Build the Docker Image
 
+If your Dockerfile is named Dockerfile.multistage, use:
 
-# -------------------------
-# Stage 2: Runner
-# -------------------------
+docker build -t devboard-frontend-multistage . -f Dockerfile.multistage
+Why -f?
 
-FROM nginx:alpine AS runner
+The -f option tells Docker which Dockerfile to use.
 
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-COPY --from=builder
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-This copies the build output from the builder stage into the runner stage.
-
-Builder Stage
-
-/app/dist
-    │
-    │ COPY --from=builder
-    ↓
-Runner Stage
-
-/usr/share/nginx/html
-Multi-Stage Flow
-                 MULTI-STAGE BUILD
-
-                Source Code
-                     ↓
-        ┌─────────────────────────┐
-        │      STAGE 1            │
-        │       BUILDER           │
-        │                         │
-        │ npm install             │
-        │ npm run build           │
-        │                         │
-        │ /app/dist               │
-        └────────────┬────────────┘
-                     │
-              COPY --from=builder
-                     ↓
-        ┌─────────────────────────┐
-        │      STAGE 2            │
-        │       RUNNER            │
-        │                         │
-        │       Nginx             │
-        │                         │
-        │ /usr/share/nginx/html   │
-        └────────────┬────────────┘
-                     ↓
-                Final Image
-                     ↓
-                 Container
-                     ↓
-                Application
-Build Multi-Stage Docker Image
-
-If the file name is:
+If your file is simply named:
 
 Dockerfile
 
-Docker automatically uses it:
+then you don't need -f because Docker automatically looks for Dockerfile.
+
+You can simply run:
 
 docker build -t devboard-frontend-multistage .
-Using a Custom Dockerfile
-
-If the Dockerfile is named:
-
-Dockerfile.multistage
-
-Use:
-
-docker build -t devboard-frontend-multistage -f Dockerfile.multistage .
--f Meaning
--f Dockerfile.multistage
-          ↓
-Use this Dockerfile
-Run Multi-Stage Container
-
-Our final Nginx container listens on port 80.
-
-We can map host port 5174 to container port 80:
-
-docker run -d -p 5174:80 devboard-frontend-multistage
+▶️ Run the Container
+docker run -d -p 5174:5174 devboard-frontend-multistage
 Port Mapping
-Host Port 5174
-      ↓
-Container Port 80
-      ↓
-Nginx
-      ↓
-Frontend Application
+5174:5174
+  │    │
+  │    └── Container Port
+  └─────── Host Port
 
-Access the application:
+The application can then be accessed through:
 
-http://YOUR-IP:5174
+http://localhost:5174
+🔄 Multi-Stage Build Flow
+Application Code
+       ↓
+┌──────────────────────┐
+│   Stage 1: Builder   │
+│   python:3.14       │
+│                      │
+│   COPY code          │
+│   Install packages   │
+│   Build application  │
+│         ↓            │
+│      /dist           │
+└──────────┬───────────┘
+           │
+           │ COPY --from=builder
+           ↓
+┌──────────────────────┐
+│   Stage 2: Runner    │
+│   node:24-alpine     │
+│                      │
+│   Copy /dist         │
+│   Install Vite       │
+│   Run application    │
+└──────────┬───────────┘
+           ↓
+     Port 5174
+           ↓
+  http://localhost:5174
 
-Example:
-
-http://13.234.56.78:5174
-2. Docker Volumes
-
-Containers are designed to be replaceable.
-
-If a container is removed, data stored only inside the container's writable layer may be lost.
-
-For persistent data, Docker volumes can be used.
-
-Create a Volume
-docker volume create mydata
-
-Check volumes:
-
-docker volume ls
-Use a Volume
-docker run -d \
-  --name mycontainer \
-  -v mydata:/app/data \
-  nginx
-
-Here:
-
-mydata
-   ↓
-Docker Volume
-
-/app/data
-   ↓
-Container Directory
-Volume Flow
-Docker Volume
-      ↕
-Container
-      ↓
-Persistent Data
-Why Use Volumes?
-Store persistent application data
-Keep data outside the container lifecycle
-Share data between containers when required
-Useful for databases and stateful applications
-3. Docker Networking
-
-Docker networking allows containers and external systems to communicate with each other.
-
-Create a Network
-docker network create mynetwork
-
-Check networks:
-
-docker network ls
-Run Containers on the Same Network
-Application Container
-docker run -d \
-  --name app \
-  --network mynetwork \
-  devboard
-Database Container
-docker run -d \
-  --name db \
-  --network mynetwork \
-  mysql
-
-Now the containers are connected to the same Docker network.
-
-Application Container
-          ↓
-     mynetwork
-          ↓
-     Database Container
-
-Containers on the same user-defined Docker network can communicate using container/service names.
-
-For example:
-
-app → db
-4. Docker Compose
-
-When an application contains multiple services, managing containers individually can become difficult.
-
-For example:
-
-Frontend
-   ↓
-Backend
-   ↓
-Database
-
-Instead of running multiple docker run commands, Docker Compose can define the services in one configuration file.
-
-Typical architecture:
-
-              Docker Compose
-                    │
-          ┌─────────┼─────────┐
-          ↓         ↓         ↓
-      Frontend    Backend   Database
-Start Services
-docker compose up -d
-Check Services
-docker compose ps
-Stop Services
-docker compose down
-Simple Flow
-compose.yaml
-      ↓
-docker compose up
-      ↓
-Multiple Containers
-      ↓
-Application Stack
-5. Docker Model Runner 🤖
-
-Docker Model Runner is an advanced Docker feature for working with AI models locally through Docker.
-
-It can be used to run supported AI models and make them available to applications through an API.
-
-Basic Concept
-Application
-      ↓
-AI Model API
-      ↓
-Docker Model Runner
-      ↓
-Local AI Model
-AI Application Architecture
-             AI Application
-                   ↓
-            Docker Model Runner
-                   ↓
-              AI Model
-                   ↓
-            Model Inference
-                   ↓
-             AI Response
-
-This concept can be useful when building AI-powered applications where you want to run models locally instead of relying entirely on an external AI API.
-
-🧠 Docker Advanced Concepts — Quick Revision
-Multi-Stage Build
-        ↓
-Separate Build and Runtime Stages
-
-Volumes
-        ↓
-Persistent Data
-
-Networking
-        ↓
-Container-to-Container Communication
-
-Docker Compose
-        ↓
-Manage Multiple Services
-
-Docker Model Runner
-        ↓
-Run / Integrate AI Models with Docker
-🚀 Complete Docker Learning Flow
-Docker Fundamentals
-        ↓
-Dockerfile
-        ↓
-Docker Images
-        ↓
-Docker Containers
-        ↓
-Port Mapping
-        ↓
-Environment Variables
-        ↓
-Multi-Stage Builds
-        ↓
-Docker Volumes
-        ↓
-Docker Networking
-        ↓
-Docker Compose
-        ↓
-Docker Model Runner
-        ↓
-AI Models with Docker
-        ↓
-AWS EC2
-        ↓
-AWS Elastic Beanstalk
-        ↓
-DevOps Deployment
-🎯 Most Important Docker Concept
-Application Source Code
-          +
-      Dockerfile
-          ↓
-     docker build
-          ↓
-      Docker Image
-          ↓
-      docker run
-          ↓
-    Docker Container
-          ↓
-    Application Runs
-
-Dockerfile contains instructions to build an image → Docker image is used to create a container → Application runs inside the container.
+💡 Key idea: The builder stage contains everything required to build the application, while the runner stage contains only what is needed to run the final application.
