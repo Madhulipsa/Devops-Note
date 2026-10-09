@@ -1256,7 +1256,7 @@ Multi-stage Docker builds use **multiple stages** to build and run an applicatio
 
 ### 1. Bring the Base Image
 
-```dockerfile
+dockerfile
 FROM python:3.14 AS builder
 
 This uses the Python 3.14 image as the base image.
@@ -1414,11 +1414,10 @@ Application Code
      Port 5174
            ↓
   http://localhost:5174
-
-💡 Key idea: The builder stage contains everything required to build the application, while the runner stage contains only what is needed to run the final application.
+Key idea: The builder stage contains everything required to build the application, while the runner stage contains only what is needed to run the final application.
 # Docker Volumes
 
-//
+
 
 ## What is a Docker Volume?
 
