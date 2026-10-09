@@ -1236,6 +1236,8 @@ Application Runs Inside Container
 **Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
 # 🚀 Advanced Docker Concepts
 
+# 🚀 Advanced Docker Concepts
+
 The following are the key **advanced Docker concepts**:
 
 * 🏗️ [Multi-Stage Dockerfile](#-multi-stage-dockerfile)
@@ -1243,4 +1245,428 @@ The following are the key **advanced Docker concepts**:
 * 🌐 Docker Networking
 * 🧩 Docker Compose
 * 🤖 Docker Model Runner
-* 🧠 AI
+* 🧠 AI Models on Docker
+
+---
+
+# 🐳 Multi-Stage Dockerfile
+
+A **multi-stage Docker build** uses multiple `FROM` instructions to separate the application build process from the final runtime image.
+
+### Why Use Multi-Stage Builds?
+
+* Reduce the final Docker image size.
+* Keep build tools out of the final image.
+* Improve security by including only the required runtime files.
+* Make Docker images more efficient.
+
+## 🔹 Stage 1 — Builder Stage
+
+### 1. Bring the Base Image
+
+```dockerfile
+FROM python:3.14 AS builder
+```
+
+* `FROM` specifies the base image.
+* `python:3.14` provides the Python environment.
+* `AS builder` names this stage `builder`.
+
+### 2. Create and Set the Working Directory
+
+```dockerfile
+WORKDIR /app
+```
+
+Creates the `/app` directory if necessary and sets it as the working directory.
+
+### 3. Copy Application Code
+
+```dockerfile
+COPY . .
+```
+
+Copies the files from the build context into the `/app` directory.
+
+### 4. Install Dependencies
+
+```dockerfile
+RUN pip install -r requirements.txt
+```
+
+Installs the Python packages listed in `requirements.txt`.
+
+### 5. Build the Application
+
+```dockerfile
+RUN python.py build
+```
+
+This is an example of a build command, but `python.py build` is not a standard Python command. Replace it with the actual build command supported by your application.
+
+For example, if your build process generates a `dist` directory, the output might look like this:
+
+```text
+/app
+└── dist/
+```
+
+At this point, the builder stage is complete.
+
+---
+
+## 🔹 Stage 2 — Runner Stage
+
+The second stage contains the files and tools required to run the application.
+
+### 1. Bring the Node.js Alpine Image
+
+```dockerfile
+FROM node:24-alpine AS runner
+```
+
+* `node:24-alpine` provides Node.js in a lightweight Alpine Linux image.
+* `AS runner` names the second stage `runner`.
+
+**Important:** This stage is suitable for a Node.js frontend only if the build output is compatible with the Node.js runtime or is served by a suitable web server.
+
+### 2. Set the Working Directory
+
+```dockerfile
+WORKDIR /app
+```
+
+Sets `/app` as the working directory.
+
+### 3. Copy `package.json`
+
+```dockerfile
+COPY package.json .
+```
+
+Copies `package.json` into `/app`.
+
+### 4. Install Vite
+
+```dockerfile
+RUN npm install -g vite
+```
+
+Installs Vite globally inside the image.
+
+### 5. Copy Build Files from the Builder Stage
+
+```dockerfile
+COPY --from=builder /app/dist ./dist
+```
+
+Copies the `dist` directory from the `builder` stage into `/app/dist` in the `runner` stage.
+
+The `--from=builder` option tells Docker to copy files from the earlier stage named `builder`.
+
+---
+
+## 📄 Complete Multi-Stage Dockerfile
+
+Save this example as `Dockerfile.multistage`.
+
+**Note:** This illustrates the two-stage concept. A Python build stage followed by a Node.js runtime stage works only when the application and build output are compatible with that setup. The build command and startup configuration must match your actual project.
+
+```dockerfile
+# -------------------------------
+# Stage 1: Builder
+# -------------------------------
+
+FROM python:3.14 AS builder
+
+# Set the working directory
+WORKDIR /app
+
+# Copy application files
+COPY . .
+
+# Install Python dependencies
+RUN pip install -r requirements.txt
+
+# Build the application
+# Replace with your actual build command
+RUN python.py build
+
+
+# -------------------------------
+# Stage 2: Runner
+# -------------------------------
+
+FROM node:24-alpine AS runner
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json
+COPY package.json .
+
+# Install Vite
+RUN npm install -g vite
+
+# Copy build output from the builder stage
+COPY --from=builder /app/dist ./dist
+
+# Start the application
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5174"]
+```
+
+### ⚠️ Important Notes
+
+* The `python.py build` command is a placeholder and must be replaced with a valid command.
+* If you run `npm run dev`, the `package.json` must define a `dev` script and the required dependencies must be installed.
+* For a production frontend, use a production web server such as Nginx to serve the generated `dist` files.
+* If you use Vite's development server, install the project's Node.js dependencies and copy the required source files into the runtime stage.
+
+---
+
+## 🐳 Build the Docker Image
+
+If your Dockerfile is named `Dockerfile.multistage`, run:
+
+```bash
+docker build -t devboard-frontend-multistage -f Dockerfile.multistage .
+```
+
+### Why Use `-f`?
+
+The `-f` option tells Docker which Dockerfile to use.
+
+For a file named `Dockerfile`, Docker uses it by default:
+
+```bash
+docker build -t devboard-frontend-multistage .
+```
+
+### Command Breakdown
+
+| Command        | Meaning                                         |
+| -------------- | ----------------------------------------------- |
+| `docker build` | Builds a Docker image                           |
+| `-t`           | Assigns a name or tag to the image              |
+| `-f`           | Specifies the Dockerfile                        |
+| `.`            | Sets the current directory as the build context |
+
+---
+
+## ▶️ Run the Container
+
+```bash
+docker run -d --name devboard-frontend -p 5174:5174 devboard-frontend-multistage
+```
+
+### Port Mapping
+
+```text
+5174:5174
+  │    │
+  │    └── Container port
+  └─────── Host port
+```
+
+* **Host port:** The port on your computer.
+* **Container port:** The port inside the container.
+* `-p 5174:5174` maps host port `5174` to container port `5174`.
+* The application must listen on the container port for the mapping to work.
+
+Access the application at:
+
+`http://localhost:5174`
+
+---
+
+## 🔄 Multi-Stage Build Flow
+
+```text
+        Application Code
+               |
+               v
+    +------------------------+
+    |    Stage 1: Builder    |
+    |                        |
+    |    python:3.14         |
+    |                        |
+    |    Copy source code    |
+    |    Install packages    |
+    |    Build application   |
+    |                        |
+    |    Output: /app/dist   |
+    +-----------+------------+
+                |
+                | COPY --from=builder
+                v
+    +------------------------+
+    |     Stage 2: Runner    |
+    |                        |
+    |    node:24-alpine      |
+    |                        |
+    |    Copy build output   |
+    |    Install runtime    |
+    |    Start application   |
+    +-----------+------------+
+                |
+                v
+         Container Port 5174
+                |
+                v
+       http://localhost:5174
+```
+
+### Key Takeaway
+
+**Builder stage = Build the application.**
+
+**Runner stage = Run the application.**
+
+A multi-stage build allows you to keep the final image smaller by copying only the required files from the builder stage.
+
+---
+
+# 💾 Docker Volumes
+
+## What Is a Docker Volume?
+
+A **Docker volume** is a storage mechanism used to persist data outside a container's writable layer.
+
+If a container is deleted, the data stored in a separate Docker volume remains available until the volume itself is deleted.
+
+## 🔹 How Does It Work?
+
+1. A container runs an application.
+2. The application writes data to a directory inside the container.
+3. Docker mounts a volume at that directory.
+4. The data is stored in the volume rather than only in the container's writable layer.
+5. If the container is deleted, the volume and its data remain.
+6. A new container can mount the same volume and access the existing data.
+
+## 🔹 Example
+
+Imagine a database container stores customer information.
+
+If the container is deleted without a volume, data stored only in its writable layer can be lost.
+
+If the database stores its data in a Docker volume, you can delete and recreate the container while keeping the volume and its data.
+
+## 🔹 Docker Volume vs Container
+
+| Component        | Purpose                                                 |
+| ---------------- | ------------------------------------------------------- |
+| Container        | Runs the application                                    |
+| Volume           | Stores persistent data                                  |
+| Mount            | Connects the volume to a directory inside the container |
+| Data persistence | Keeps data available beyond the container's lifecycle   |
+
+## 🔹 Docker Volume Commands
+
+### 1. Create a Volume
+
+```bash
+docker volume create myvolume
+```
+
+Creates a Docker volume named `myvolume`.
+
+### 2. Run a Container with the Volume
+
+```bash
+docker run -d --name mycontainer -v myvolume:/app/data nginx
+```
+
+**Command breakdown:**
+
+* `docker run` — Creates and starts a container.
+* `-d` — Runs the container in the background.
+* `--name mycontainer` — Assigns a name to the container.
+* `-v myvolume:/app/data` — Mounts `myvolume` at `/app/data` inside the container.
+* `nginx` — Specifies the image to run.
+
+### 3. Verify the Volume
+
+```bash
+docker volume ls
+```
+
+Lists the Docker volumes on your system.
+
+### 4. Inspect the Volume
+
+```bash
+docker volume inspect myvolume
+```
+
+Displays information about the volume.
+
+### 5. Delete the Container
+
+```bash
+docker rm -f mycontainer
+```
+
+Removes the container. The named volume `myvolume` remains.
+
+### 6. Reuse the Same Volume
+
+```bash
+docker run -d --name newcontainer -v myvolume:/app/data nginx
+```
+
+The new container mounts the same volume and can access data previously stored there.
+
+**Important:** The example demonstrates volume mounting. The Nginx image does not automatically save all its website files to `/app/data`; an application must write its persistent data to the mounted directory.
+
+---
+
+## 🔄 Docker Volume Flow
+
+```text
+       Docker Container
+      +------------------+
+      |                  |
+      |   Application    |
+      |                  |
+      |   /app/data      |
+      +--------+---------+
+               |
+               | Volume Mount
+               v
+      +------------------+
+      |   myvolume       |
+      |                  |
+      |   Persistent     |
+      |      Data        |
+      +------------------+
+
+      Delete Container
+               |
+               v
+      Volume Data Remains
+```
+
+## 🧠 Remember
+
+**Docker Volume = Persistent Storage**
+
+* Containers run applications.
+* Volumes store data independently of a container's lifecycle.
+* Mounting a volume connects persistent storage to a directory inside the container.
+* Deleting a container does not automatically delete a named volume.
+* Deleting a volume can permanently remove its stored data.
+
+---
+
+# 📚 Quick Revision
+
+| Concept                | Main Purpose                                                  |
+| ---------------------- | ------------------------------------------------------------- |
+| Multi-Stage Dockerfile | Separates building from running an application                |
+| Docker Volume          | Persists data beyond a container's lifecycle                  |
+| Docker Networking      | Enables communication between containers and other systems    |
+| Docker Compose         | Defines and runs multi-container applications                 |
+| Docker Model Runner    | Runs supported AI models locally using Docker                 |
+| AI Models on Docker    | Packages AI-related services and dependencies into containers |
+
+**Next step:** Learn Docker Networking, Docker Compose, and how to run AI models with Docker.
