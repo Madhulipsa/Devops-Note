@@ -1420,6 +1420,8 @@ Application Code
 💡 Key idea: The builder stage contains everything required to build the application, while the runner stage contains only what is needed to run the final application.
 # Docker Volumes
 
+//
+
 ## What is a Docker Volume?
 
 A Docker volume is used to store data outside a container so that the data remains safe even if the container is deleted.
