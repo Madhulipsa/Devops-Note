@@ -1233,9 +1233,7 @@ Docker Container
 Application Runs Inside Container
 ```
 
-> **Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
-
-
+**Code chahiye → Dockerfile se code build karenge → Docker Image banegi → Image se Container banega → Container ke andar Application run hogi.**
 
 # 🚀 Advanced Docker Concepts
 
@@ -1463,3 +1461,5 @@ docker run -d --name mycontainer -v myvolume:/app/data nginx
 **Docker Volume = Persistent Storage**
 
 A Docker volume keeps data separate from the container's lifecycle.
+
+
