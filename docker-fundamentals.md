@@ -1418,3 +1418,46 @@ Application Code
   http://localhost:5174
 
 💡 Key idea: The builder stage contains everything required to build the application, while the runner stage contains only what is needed to run the final application.
+# Docker Volumes
+
+## What is a Docker Volume?
+
+A Docker volume is used to store data outside a container so that the data remains safe even if the container is deleted.
+
+### How Does It Work?
+
+1. A Docker container stores user data.
+2. The container's data is mapped to a Docker volume.
+3. The volume stores data separately from the container.
+4. If the container is deleted, the data remains safe in the volume.
+5. When we create a new container, we can attach the same volume to access the existing data.
+
+### Example
+
+Imagine a container stores important user data. If the container is deleted, the data will not be lost because it is stored in a Docker volume.
+
+### Key Points
+
+* **Container:** Runs the application.
+* **Volume:** Stores persistent data.
+* **Data Persistence:** Keeps data safe even after a container is deleted.
+* **Volume Mapping:** Connects a volume to a directory inside the container.
+
+### Docker Command Example
+
+```bash
+docker volume create myvolume
+docker run -d --name mycontainer -v myvolume:/app/data nginx
+```
+
+**Explanation:**
+
+* `docker volume create myvolume` creates a Docker volume.
+* `-v myvolume:/app/data` mounts the volume at `/app/data` inside the container.
+* Data stored in `/app/data` persists in the volume even if the container is deleted.
+
+### Remember
+
+**Docker Volume = Persistent Storage**
+
+A Docker volume keeps data separate from the container's lifecycle.
