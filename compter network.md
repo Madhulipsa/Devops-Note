@@ -1,4 +1,4 @@
-Computer Networks (CN) for DevOps 
+**Computer Networks (CN) for DevOps** 
 1. The Physical Internet — How the Internet Works
 2. Internet Addressing
 3. How Data Moves on the Internet
@@ -21,7 +21,7 @@ Devices connect to the Internet through different types of networks and communic
 
 Much of the Internet's data travels through **fiber-optic cables**, including cables laid under the ocean. These cables use light to transmit data over long distances.
 
-For example:
+**For example:**
 - A laptop in Pune connects to the Internet through a local network and an Internet Service Provider (ISP).
 - A laptop in Canada connects through its own network and ISP.
 - These networks communicate with each other through routers and physical communication links.
@@ -29,24 +29,24 @@ For example:
 **In simple words:** The Internet connects computers and networks around the world so they can exchange data.
 
 Packet, Latency, and Bandwidth
-1. Packet: A packet is a small logical unit of data. It contains encoded data and address details that help it travel from the source to the destination.
+**1. Packet:** A packet is a small logical unit of data. It contains encoded data and address details that help it travel from the source to the destination.
 
-2. Latency: Latency is the time it takes for data to travel from the source to the destination.
+**2. Latency:** Latency is the time it takes for data to travel from the source to the destination.
 
-3. Bandwidth: Bandwidth is the maximum amount of data that a network can transfer per second, such as Mbps or Gbps.
+**3. Bandwidth:** Bandwidth is the maximum amount of data that a network can transfer per second, such as Mbps or Gbps.
 
 
 Jitter: The variation in latency (delay) when data packets travel from the source to the destination is called jitter.
 
 Simple example:
 
-Packet: A small piece of data sent over the internet.
+**Packet**: A small piece of data sent over the internet.
 
-Latency: How long the data takes to reach its destination.
+**Latency**: How long the data takes to reach its destination.
 
-Bandwidth: How much data can be transferred per second
+**Bandwidth**: How much data can be transferred per second
 
-jitter-If one packet takes 20 ms, the next takes 40 ms, and another takes 25 ms, this variation in delay is called jitter.
+**jitter**-If one packet takes 20 ms, the next takes 40 ms, and another takes 25 ms, this variation in delay is called jitter.
 
 physical 
 
@@ -72,23 +72,25 @@ A **switch** is a physical networking device that connects multiple devices with
 - A switch can help multiple devices access the Internet when connected to a router.
 
 
-A hub is an old networking device used to connect multiple computers in a network.
+A **hub**is an old networking device used to connect multiple computers in a network.
 - Before switches became common, hubs were used to connect multiple devices.
 - When a hub receives data from one device, it sends that data to all connected devices.
 - A switch is smarter because it forwards data to the specific device it is intended for.
-Simple example: A hub is like a teacher announcing a message to the whole class, while a switch is like delivering the message only to the intended student.
+**Simple example:** A hub is like a teacher announcing a message to the whole class, while a switch is like delivering the message only to the intended student.
 
 
 
-CDN (Content Delivery Network)
+**CDN (Content Delivery Network)**
 A CDN is a network of servers that delivers static content to users from a server located closer to them.
 Static data means files that usually remain the same, such as images, CSS, JavaScript files, videos, and fonts.
-Example:
+**Example:**
 - Your main website server is in the USA.
 - A user opens your website in India.
 - A CDN can deliver images and CSS files from a nearby Indian CDN server instead of fetching them from the USA every time.
 - This reduces latency and helps the website load faster.
-Edge computing: Processing data closer to the user or device instead of sending everything to a central server.
-Simple difference:
-- CDN: Delivers cached content closer to the user.
-- Edge computing: Processes data closer to the user.
+  
+**Edge computing**: Processing data closer to the user or device instead of sending everything to a central server.
+
+**Simple difference:**
+- **CDN: Delivers**cached content closer to the user.
+- **Edge computing**: Processes data closer to the user.
