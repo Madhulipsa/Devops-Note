@@ -83,6 +83,7 @@ A **hub**is an old networking device used to connect multiple computers in a net
 **CDN (Content Delivery Network)**
 A CDN is a network of servers that delivers static content to users from a server located closer to them.
 Static data means files that usually remain the same, such as images, CSS, JavaScript files, videos, and fonts.
+
 **Example:**
 - Your main website server is in the USA.
 - A user opens your website in India.
@@ -94,3 +95,188 @@ Static data means files that usually remain the same, such as images, CSS, JavaS
 **Simple difference:**
 - **CDN: Delivers**cached content closer to the user.
 - **Edge computing**: Processes data closer to the user.
+
+### 2. Internet Addressing
+
+Internet addressing is a system used to uniquely identify devices on a network.
+
+For example, if I send data from Pune to Delhi, the data needs the correct destination address. If the address is incorrect, the data may reach the wrong destination or fail to reach its destination.
+
+IP (Internet Protocol) is a set of rules used to address and route data packets across networks. Every device communicating over an IP network uses IP addresses to identify the source and destination of data.
+
+**Key Point:** An IP address helps data reach the correct destination over the internet.
+
+
+**1. IPv4 (Internet Protocol Version 4)**
+
+Address size: 32 bits
+
+Total addresses: Approximately 4.3 billion
+
+Format: 4 octets separated by dots (.)
+
+Range of each octet: 0–255
+
+Example: 192.168.1.4
+
+Example breakdown:
+
+192 . 168 . 1 . 4
+
+Each octet contains 8 bits, so (4 \times 8 = 32) bits.
+
+**2. IPv6 (Internet Protocol Version 6)**
+
+Address size: 128 bits
+
+Total addresses: Approximately (3.4 \times 10^{38}) (340 undecillion)
+
+Format: 8 groups of hexadecimal numbers separated by colons (:)
+
+Example: 2001:0db8:0000:0000:0000:ff00:0042:8329
+
+Each group contains 16 bits, so (8 \times 16 = 128) bits.
+
+
+**3. Subnet (Subnetwork)**
+
+A subnet is a smaller network created by dividing a larger IP network into smaller networks.
+
+IPv4 supports approximately 4.3 billion addresses. Instead of managing all devices in one large network, we divide the network into smaller parts called subnets.
+
+Example:
+
+Large network: 192.168.1.0/24
+
+Subnet 1: 192.168.1.0/26
+
+Subnet 2: 192.168.1.64/26
+
+Each subnet has its own IP address range.
+
+**Key Point:** A subnet helps organize IP addresses and control how devices communicate within a network. Devices outside the subnet generally need a router to communicate with devices inside it.
+
+
+
+## CIDR (Classless Inter-Domain Routing)
+
+A subnet is a smaller network within a larger network. CIDR helps define the size of a subnet and its IP address range.
+
+Question: If a subnet is running internally, how can we find the IP address range available within that subnet?
+
+
+**4. DNS (Domain Name System)**
+
+DNS is like a phone book of the internet.
+
+DNS translates a human-readable domain name into an IP address so that a browser can locate the correct server.
+
+Example:
+
+Domain name: google.com
+
+DNS finds the IP address associated with google.com.
+
+The browser uses that IP address to connect to Google's server.
+
+**Key Point:** Humans remember domain names easily, while computers use IP addresses to communicate. DNS connects the two.
+
+
+**Step-by-Step DNS Lookup Flow**
+
+**Example:** You type google.com into your browser.
+
+**User enters the domain:** You type google.com in your browser.
+
+**Browser cache**: The browser checks whether it already knows the IP address.
+
+**Operating system cache:** If not found, the OS checks its DNS cache.
+
+**Recursive DNS resolver:** The request goes to a DNS resolver, usually provided by your ISP or a public DNS service.
+
+**Root DNS server:** If the resolver has no cached answer, it asks a root server where to find .com DNS servers.
+
+**TLD DNS server:** The .com server directs the resolver to Google's authoritative DNS servers.
+
+**Authoritative DNS server:** It provides the DNS record containing the IP address for google.com.
+
+**IP address returned:** The resolver sends the answer back to your computer and may cache it.
+
+**Browser connects:** The browser uses the IP address to connect to Google's server and load the website.
+
+
+
+3. How Data Moves on the Internet
+
+OSI Model – Daily Life Story (Teacher & Student on WhatsApp)
+Example: A student sends “Hello, Sir!” to a teacher on WhatsApp.
+
+which layer does application work in osi?
+1. Application Layer — WhatsApp
+The student types “Hello, Sir!” and presses Send.
+Layer 7 · User-facing application
+
+which layer does encryption work in osi?
+2. Presentation Layer — Data Format
+The message is represented in a suitable data format and encrypted for secure communication.
+Layer 6 · Formatting and encryption
+
+
+which layer does authentication work in osi ?
+3. Session Layer — Communication Session
+Think of this as managing the ongoing communication between the two endpoints.
+Layer 5 · Session management
+
+which layer does device address mac address exchange work in osi?
+4. Transport Layer — TCP/UDP
+Transport protocols help deliver data between endpoints. WhatsApp can use different transport mechanisms depending on the connection and service.
+Layer 4 · Transport
+
+which layer does ip exchange work in osi?
+5. Network Layer — IP Address
+IP addressing and routing help move packets across networks toward their destination.
+Layer 3 · IP routing
+
+which layer does  work in osi?
+6. Data Link Layer — Local Network
+Wi-Fi or Ethernet carries frames across the local network link.
+Layer 2 · Frames and MAC addresses
+
+which layer does cables work in osi?
+7. Physical Layer — Signals
+The data travels as radio signals over Wi-Fi or as electrical or optical signals through the network.
+Layer 1 · Bits and signals
+
+TCP/IP Model — WhatsApp Story 📱
+Imagine a student sends “Hello, Sir!” to a teacher on WhatsApp. How does the message travel through the internet
+
+4
+Layer ----Application Layer, Presentation Layer , Session Layer
+
+Application Layer
+The student types “Hello, Sir!” in WhatsApp. Application protocols provide network services to the app.
+Examples: HTTP, DNS, SMTP
+
+3
+Layer----Transport Layer
+
+Transport Layer
+TCP or UDP transports data between endpoints. TCP provides reliable, ordered delivery; UDP does not provide those guarantees by itself.
+Examples: TCP, UDP
+
+2
+Layer----Network Layer
+
+Internet Layer
+IP addresses and routers help packets travel across networks toward the teacher's device.
+Examples: IPv4, IPv6, ICMP
+
+1
+Layer ---Data Link Layer,  Physical Layer
+
+Network Access Layer
+Wi-Fi or Ethernet carries the data over the local network as signals and frames.
+Examples: Wi-Fi, Ethernet
+
+
+
