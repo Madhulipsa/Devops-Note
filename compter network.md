@@ -461,3 +461,301 @@ Using more bandwidth does not automatically increase latency. However, network c
 - **SSH:** Securely connects to remote servers.
 - **Latency:** Time taken for data to travel.
 - **Packet loss:** Data packets that fail to reach their destination.
+
+
+## 4. How Does Security Work on the Internet?
+
+### 1. Firewall
+
+A firewall controls incoming and outgoing network traffic based on security rules.
+
+For example, when we launch an Ubuntu server on AWS, the server may have a public IP address. However, having a public IP does not mean everyone can access every service running on the server.
+
+The firewall or AWS Security Group controls which traffic is allowed to reach the server.
+
+### 2. Ingress and Egress Traffic
+
+There are two types of traffic directions:
+
+**Ingress (Inbound) Traffic**
+
+Ingress means incoming traffic that enters the server or network.
+
+Example:
+- A client sends a request to access a website.
+- The request travels through the internet toward the server.
+- The server's security rules determine whether the request is allowed.
+
+**Egress (Outbound) Traffic**
+
+Egress means outgoing traffic that leaves the server or network.
+
+Example:
+- An Ubuntu server downloads Nginx packages from the internet.
+- The server sends outgoing requests to package repositories.
+- Its outbound security rules determine which traffic is allowed.
+
+**Traffic means data moving across a network**, such as requests, responses, and packets.
+
+### 3. IP Address and Network Layer
+
+At the Network Layer (Layer 3 of the OSI model), IP addresses help identify the source and destination of packets and route them across networks.
+
+For example, when you access a website using a server's public IP address, your request needs to reach the correct destination.
+
+However, an IP address alone does not guarantee access. Network routes, firewall rules, and the application service must also be configured correctly.
+
+---
+
+### 4. Practical Example — Install Nginx on an Ubuntu Server
+
+Suppose you launch an Ubuntu EC2 instance on AWS and install Nginx.
+
+**Step 1: Install Nginx**
+
+```bash
+sudo apt-get update
+sudo apt-get install nginx
+```
+
+**Step 2: Start Nginx**
+
+```bash
+sudo systemctl start nginx
+```
+
+Check whether Nginx is running:
+
+```bash
+sudo systemctl status nginx
+```
+
+**Step 3: Open the Server's Public IP Address**
+
+Open your browser and enter:
+
+```text
+http://YOUR_PUBLIC_IP
+```
+
+You may see the error:
+
+```text
+This site can't be reached
+```
+
+### Why Does This Happen?
+
+Nginx may be installed and running correctly, but the AWS Security Group might not allow incoming HTTP traffic on port 80.
+
+The request needs permission to reach the web server.
+
+---
+
+### 5. AWS Security Group Rules
+
+An AWS Security Group acts as a virtual firewall for an EC2 instance.
+
+It contains inbound and outbound rules.
+
+#### Inbound Rules
+
+Inbound rules control traffic coming into the EC2 instance.
+
+| Type | Protocol | Port | Purpose |
+|---|---|---|---|
+| SSH | TCP | 22 | Remote server access |
+| HTTP | TCP | 80 | Website access |
+| HTTPS | TCP | 443 | Secure website access |
+
+**Important:** Port 22 is used for SSH, not for website access. To access the default Nginx webpage over HTTP, allow inbound TCP traffic on port 80.
+
+#### Outbound Rules
+
+Outbound rules control traffic leaving the EC2 instance.
+
+A default Security Group configuration commonly allows all outbound traffic.
+
+For example, Ubuntu may need outbound access to download software packages using `apt`.
+
+Outbound rules can be restricted when required, but doing so may prevent package downloads or other services from working.
+
+---
+
+### 6. Configure Inbound Rules in AWS
+
+Follow these steps:
+
+1. Open the AWS Management Console.
+2. Go to **EC2 → Instances**.
+3. Select your Ubuntu instance.
+4. Open the **Security** tab.
+5. Click the associated Security Group.
+6. Select **Edit inbound rules**.
+7. Add an HTTP rule:
+   - Type: HTTP
+   - Protocol: TCP
+   - Port range: 80
+   - Source: Choose an appropriate IPv4 source range.
+8. Save the rules.
+
+Now open the public IP address in your browser using HTTP.
+
+```text
+http://YOUR_PUBLIC_IP
+```
+
+If Nginx is running and the network configuration is correct, the Nginx welcome page should appear.
+
+### 7. What Does 0.0.0.0/0 Mean?
+
+`0.0.0.0/0` means all IPv4 addresses.
+
+If you configure an inbound rule with this source, traffic from any IPv4 address can attempt to reach that port, subject to other network controls.
+
+For example:
+
+- HTTP port 80 with source `0.0.0.0/0`: the website can be publicly accessible.
+- SSH port 22 with source `0.0.0.0/0`: SSH access is exposed to all IPv4 addresses, which is generally unsafe.
+
+### 8. What Does My IP /32 Mean?
+
+`/32` represents a single IPv4 address.
+
+For example:
+
+```text
+203.0.113.25/32
+```
+
+This CIDR notation represents one IPv4 address.
+
+When configuring SSH access, choose **My IP** in the AWS console to restrict access to your current public IPv4 address.
+
+This is safer than allowing SSH access from anywhere. If your public IP changes, you may need to update the rule.
+
+### 9. Important Security Best Practices
+
+- Allow SSH (port 22) only from trusted IP addresses.
+- Allow HTTP (port 80) publicly only when the website is intended to be public.
+- Use HTTPS (port 443) for secure website communication.
+- Avoid opening unnecessary ports.
+- Remember that a public IP does not automatically make a service accessible.
+- Check the Security Group, network ACLs, routing, server firewall, and service status when troubleshooting access problems.
+
+### Quick Revision
+
+- **Firewall:** Controls network traffic using security rules.
+- **Ingress:** Incoming traffic.
+- **Egress:** Outgoing traffic.
+- **IP address:** Identifies a network endpoint for IP communication.
+- **Port 22:** SSH.
+- **Port 80:** HTTP.
+- **Port 443:** HTTPS.
+- **0.0.0.0/0:** All IPv4 addresses.
+- **/32:** One IPv4 address.
+- **AWS Security Group:** Controls inbound and outbound traffic for AWS resources.
+
+## TLS Certificate and UFW Firewall
+
+### 1. TLS Certificate
+
+TLS stands for **Transport Layer Security**.
+
+TLS helps secure communication between a client and a server by encrypting data during transmission.
+
+For example, when you open an HTTPS website, TLS helps protect the data exchanged between your browser and the website.
+
+- HTTP uses port 80 by default.
+- HTTPS commonly uses port 443.
+- TLS helps provide encryption, authentication, and data integrity.
+
+### 2. UFW (Uncomplicated Firewall)
+
+UFW is a firewall management tool commonly used on Ubuntu Linux.
+
+It allows us to control incoming and outgoing network traffic using firewall rules.
+
+**Check UFW status:**
+
+```bash
+sudo ufw status
+```
+
+**Enable UFW:**
+
+```bash
+sudo ufw enable
+```
+
+**Allow SSH:**
+
+```bash
+sudo ufw allow 22/tcp
+```
+
+**Allow HTTP:**
+
+```bash
+sudo ufw allow 80/tcp
+```
+
+**Allow HTTPS:**
+
+```bash
+sudo ufw allow 443/tcp
+```
+
+**Allow a specific port:**
+
+```bash
+sudo ufw allow 8080/tcp
+```
+
+### 3. Delete a Particular UFW Rule
+
+If you want to delete a particular firewall rule, first check the numbered rules.
+
+```bash
+sudo ufw status numbered
+```
+
+Example output:
+
+```text
+[ 1] 22/tcp    ALLOW IN    Anywhere
+[ 2] 80/tcp    ALLOW IN    Anywhere
+[ 3] 443/tcp   ALLOW IN    Anywhere
+```
+
+Suppose you want to delete the HTTP rule on port 80.
+
+**Step 1: Delete the rule by number**
+
+```bash
+sudo ufw delete 2
+```
+
+This deletes rule number 2 in the displayed list.
+
+**Important:** Rule numbers can change after a rule is deleted. Check the numbered list again before deleting another rule.
+
+**Alternative: Delete by rule definition**
+
+```bash
+sudo ufw delete allow 80/tcp
+```
+
+This removes the matching allow rule for TCP port 80.
+
+### Quick Revision
+
+- **TLS:** Secures communication using encryption and authentication.
+- **HTTPS:** HTTP secured using TLS.
+- **UFW:** Ubuntu firewall management tool.
+- **ufw allow:** Adds a firewall rule.
+- **ufw status numbered:** Displays firewall rules with numbers.
+- **ufw delete:** Removes a firewall rule.
+- If you are connected to a remote Ubuntu or AWS EC2 server over SSH, allow SSH before enabling UFW:
+sudo ufw allow 22/tcp
+sudo ufw enable
