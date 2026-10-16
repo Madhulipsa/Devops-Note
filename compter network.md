@@ -206,77 +206,110 @@ The browser uses that IP address to connect to Google's server.
 
 
 
-3. How Data Moves on the Internet
+## 3. How Data Moves on the Internet
 
-OSI Model – Daily Life Story (Teacher & Student on WhatsApp)
-Example: A student sends “Hello, Sir!” to a teacher on WhatsApp.
+### OSI Model – Daily Life Story (Teacher & Student on WhatsApp)
 
-which layer does application work in osi?
-1. Application Layer — WhatsApp
+**Example:** A student sends “Hello, Sir!” to a teacher on WhatsApp.
+
+**Which layer does application work in OSI?**
+
+**1. Application Layer — WhatsApp**
+
 The student types “Hello, Sir!” and presses Send.
+
 Layer 7 · User-facing application
 
-which layer does encryption work in osi?
-2. Presentation Layer — Data Format
+**Which layer does encryption work in OSI?**
+
+**2. Presentation Layer — Data Format**
+
 The message is represented in a suitable data format and encrypted for secure communication.
+
 Layer 6 · Formatting and encryption
 
+**Which layer does authentication work in OSI?**
 
-which layer does authentication work in osi ?
-3. Session Layer — Communication Session
+**3. Session Layer — Communication Session**
+
 Think of this as managing the ongoing communication between the two endpoints.
+
 Layer 5 · Session management
 
-which layer does device address mac address exchange work in osi?
-4. Transport Layer — TCP/UDP
+**Which layer does device address MAC address exchange work in OSI?**
+
+**4. Transport Layer — TCP/UDP**
+
 Transport protocols help deliver data between endpoints. WhatsApp can use different transport mechanisms depending on the connection and service.
+
 Layer 4 · Transport
 
-which layer does ip exchange work in osi?
-5. Network Layer — IP Address
+**Which layer does IP exchange work in OSI?**
+
+**5. Network Layer — IP Address**
+
 IP addressing and routing help move packets across networks toward their destination.
+
 Layer 3 · IP routing
 
-which layer does  work in osi?
-6. Data Link Layer — Local Network
+**Which layer does work in OSI?**
+
+**6. Data Link Layer — Local Network**
+
 Wi-Fi or Ethernet carries frames across the local network link.
+
 Layer 2 · Frames and MAC addresses
 
-which layer does cables work in osi?
-7. Physical Layer — Signals
+**Which layer do cables work in OSI?**
+
+**7. Physical Layer — Signals**
+
 The data travels as radio signals over Wi-Fi or as electrical or optical signals through the network.
+
 Layer 1 · Bits and signals
 
-TCP/IP Model — WhatsApp Story 📱
-Imagine a student sends “Hello, Sir!” to a teacher on WhatsApp. How does the message travel through the internet
+---
 
-4
-Layer ----Application Layer, Presentation Layer , Session Layer
+### TCP/IP Model — WhatsApp Story 📱
 
-Application Layer
+Imagine a student sends “Hello, Sir!” to a teacher on WhatsApp. How does the message travel through the internet?
+
+**4**
+
+**Layer — Application Layer, Presentation Layer, Session Layer**
+
+**Application Layer**
+
 The student types “Hello, Sir!” in WhatsApp. Application protocols provide network services to the app.
+
 Examples: HTTP, DNS, SMTP
 
-3
-Layer----Transport Layer
+**3**
 
-Transport Layer
+**Layer — Transport Layer**
+
+**Transport Layer**
+
 TCP or UDP transports data between endpoints. TCP provides reliable, ordered delivery; UDP does not provide those guarantees by itself.
+
 Examples: TCP, UDP
 
-2
-Layer----Network Layer
+**2**
 
-Internet Layer
+**Layer — Network Layer**
+
+**Internet Layer**
+
 IP addresses and routers help packets travel across networks toward the teacher's device.
+
 Examples: IPv4, IPv6, ICMP
 
-1
-Layer ---Data Link Layer,  Physical Layer
+**1**
 
-Network Access Layer
+**Layer — Data Link Layer, Physical Layer**
+
+**Network Access Layer**
+
 Wi-Fi or Ethernet carries the data over the local network as signals and frames.
+
 Examples: Wi-Fi, Ethernet
-
-
-
