@@ -759,3 +759,370 @@ This removes the matching allow rule for TCP port 80.
 - If you are connected to a remote Ubuntu or AWS EC2 server over SSH, allow SSH before enabling UFW:
 sudo ufw allow 22/tcp
 sudo ufw enable
+
+# 5. Network Security and AWS VPC
+
+## 1. Three Important Things in Network Communication
+
+For network communication, three important things are:
+
+1. Protocol
+2. IP Address
+3. Port Number
+
+### Daily-Life Example: Sending a Letter
+
+Imagine you want to send a letter to your friend.
+
+- **IP Address:** Your friend's house address tells the postal service where to deliver the letter.
+- **Port Number:** Imagine your friend lives in an apartment building. The apartment number identifies the correct destination inside the building.
+- **Protocol:** The rules followed by the postal service are similar to communication protocols.
+
+In networking, these three concepts help data reach the correct destination and service.
+
+### Protocol
+
+A protocol defines the rules for communication between devices.
+
+Examples:
+- HTTP — Transfers web content.
+- HTTPS — Transfers web content securely using TLS.
+- SSH — Securely connects to remote servers.
+- TCP — Provides reliable, ordered data delivery.
+- UDP — Sends data without establishing a connection first.
+
+### IP Address
+
+An IP address identifies a network endpoint and helps route data packets across networks.
+
+Example:
+
+`192.168.1.10`
+
+Daily-life example: An IP address is like a house address used to find the destination.
+
+### Port Number
+
+A port number identifies the application or service receiving network traffic on a device.
+
+Examples:
+
+| Port | Service | Purpose |
+|---|---|---|
+| 22 | SSH | Remote server access |
+| 80 | HTTP | Website access |
+| 443 | HTTPS | Secure website access |
+
+Daily-life example: If the IP address is the building address, the port is like the apartment number for the intended service.
+
+**Remember:** The IP address helps identify the destination, the port identifies the service, and the protocol defines how communication happens.
+
+---
+
+## 2. What Is a Firewall?
+
+A firewall controls incoming and outgoing network traffic according to security rules.
+
+Daily-life example: A security guard at a building checks who is allowed to enter and who is allowed to leave.
+
+In networking:
+
+- **Ingress (Inbound):** Traffic coming into a server or network.
+- **Egress (Outbound):** Traffic leaving a server or network.
+
+For example, when a user opens your website, the incoming request is ingress traffic. When your Ubuntu server downloads an update, that request is egress traffic.
+
+A firewall can allow or block traffic based on configured rules.
+
+---
+
+## 3. What Is a VPC in AWS?
+
+VPC stands for **Virtual Private Cloud**.
+
+A VPC is a logically isolated virtual network in AWS where we can launch resources such as EC2 instances.
+
+Inside one VPC, we can create multiple subnets.
+
+For example:
+- Public subnet
+- Private subnet
+
+### Daily-Life Example: A Gated Society
+
+Imagine a gated society with different areas:
+
+- The main gate connects the society to the outside world.
+- The reception area is accessible to visitors.
+- Private residential areas are restricted to authorized people.
+- Internal roads connect different buildings.
+
+Similarly, in AWS:
+
+- **VPC:** The entire gated society.
+- **Public subnet:** An area designed for resources that need internet connectivity.
+- **Private subnet:** An area for resources that should not be directly accessible from the public internet.
+- **Route table:** The directions that determine where traffic should go.
+- **Security Group:** A virtual security guard controlling permitted traffic.
+
+---
+
+## 4. Public Subnet
+
+A public subnet has a route to an Internet Gateway.
+
+It is commonly used for resources that need to receive public internet traffic.
+
+Examples:
+- Public-facing web servers
+- Internet-facing load balancers
+- Bastion hosts
+
+For an EC2 instance to be directly accessible from the internet, it also needs an appropriate public IP address and security rules allowing the required traffic.
+
+### Daily-Life Example
+
+A shop located at the entrance of a society is easy for visitors to reach.
+
+Similarly, a public-facing web server can receive requests from internet users when its network and security settings permit access.
+
+---
+
+## 5. Private Subnet
+
+A private subnet is generally used for resources that should not be directly accessible from the public internet.
+
+Examples:
+- Application servers
+- Databases
+- Internal services
+
+### Daily-Life Example
+
+Imagine a society's private residential area. Visitors cannot directly enter it from the street without the appropriate access.
+
+Similarly, private EC2 instances are not directly reachable from the public internet through a normal inbound internet route.
+
+Private resources can still communicate with other permitted resources inside the VPC.
+
+They may also access the internet for outbound connections through a NAT Gateway.
+
+---
+
+## 6. Internet Gateway (IGW)
+
+An Internet Gateway connects a VPC to the internet when the network is configured correctly.
+
+### Daily-Life Example
+
+The main gate of a society connects the society's internal roads to the outside road.
+
+Similarly, an Internet Gateway allows appropriately configured VPC resources to communicate with the internet.
+
+### How Does It Work?
+
+Suppose you launch an Ubuntu EC2 instance and install Nginx.
+
+First, install Nginx:
+
+```bash
+sudo apt-get update
+sudo apt-get install nginx
+```
+
+Start Nginx:
+
+```bash
+sudo systemctl start nginx
+```
+
+Check its status:
+
+```bash
+sudo systemctl status nginx
+```
+
+Now open your EC2 instance's public IP address in a browser:
+
+```text
+http://YOUR_PUBLIC_IP
+```
+
+If you see "This site can't be reached," one possible reason is that inbound HTTP traffic is not allowed by the AWS Security Group.
+
+For the website to work, check:
+- The instance has a suitable public IP address.
+- The subnet route table has a route to the Internet Gateway.
+- The Security Group allows inbound TCP port 80.
+- The operating system firewall permits the traffic.
+- Nginx is running and listening on the correct port.
+
+### HTTP Inbound Rule
+
+In AWS, open:
+
+EC2 → Instances → Select Instance → Security → Security Group → Edit inbound rules.
+
+Add:
+
+| Setting | Value |
+|---|---|
+| Type | HTTP |
+| Protocol | TCP |
+| Port | 80 |
+| Source | `0.0.0.0/0` for a publicly accessible website |
+
+`0.0.0.0/0` means all IPv4 addresses. Use it only when public access is intended.
+
+---
+
+## 7. NAT Gateway
+
+NAT stands for Network Address Translation.
+
+A NAT Gateway allows resources in a private subnet to initiate connections to the internet without allowing unsolicited inbound internet connections through that gateway.
+
+### Daily-Life Example
+
+Imagine a resident in a private residential area wants to order something from an outside shop.
+
+The resident makes the request through an authorized common service. The outside shop responds through that service, but it cannot automatically enter the resident's private home.
+
+Similarly, a private EC2 instance can download updates or software from the internet through a NAT Gateway.
+
+### How Does NAT Gateway Work?
+
+Suppose an EC2 instance in a private subnet needs to download software updates.
+
+The traffic follows this path:
+
+```text
+Private EC2 Instance
+        |
+        v
+Private Subnet Route Table
+        |
+        v
+NAT Gateway
+(Public Subnet)
+        |
+        v
+Internet Gateway
+        |
+        v
+Internet
+```
+
+Steps:
+
+1. The private EC2 instance sends an outbound request.
+2. Its route table directs internet-bound traffic to the NAT Gateway.
+3. The NAT Gateway translates the source address.
+4. Traffic leaves the VPC through the Internet Gateway.
+5. The response returns through the NAT Gateway to the private instance.
+
+**Important:** A NAT Gateway does not provide direct inbound internet access to the private EC2 instance.
+
+---
+
+## 8. CIDR — IP Address Range
+
+CIDR stands for **Classless Inter-Domain Routing**.
+
+CIDR notation defines an IP address range for a network or subnet.
+
+Example:
+
+`10.0.0.0/16`
+
+This IPv4 CIDR block contains 65,536 addresses.
+
+### Daily-Life Example: Dividing a Society Into Blocks
+
+Imagine a large society with many houses.
+
+You divide it into smaller blocks:
+- Block A
+- Block B
+- Block C
+
+Each block contains a specific range of house numbers.
+
+Similarly, CIDR allows us to divide a large IP address range into smaller subnet ranges.
+
+### Example AWS VPC
+
+```text
+VPC: 10.0.0.0/16
+       |
+       |---- Public Subnet:  10.0.1.0/24
+       |
+       |---- Private Subnet: 10.0.2.0/24
+```
+
+- `10.0.0.0/16` is the VPC address range.
+- `10.0.1.0/24` is the public subnet range.
+- `10.0.2.0/24` is the private subnet range.
+
+Each `/24` contains 256 total IPv4 addresses. AWS reserves five addresses in each IPv4 subnet, leaving 251 available for resources.
+
+### Why Do We Use CIDR?
+
+- To define the IP range of a VPC.
+- To divide a VPC into multiple subnets.
+- To allocate addresses to network resources.
+- To organize and manage network routing.
+
+---
+
+## 9. Complete AWS VPC Architecture
+
+```text
+                       INTERNET
+                           |
+                           v
+                  INTERNET GATEWAY
+                           |
+               +-----------+-----------+
+               |                       |
+               v                       v
+         PUBLIC SUBNET            PUBLIC SUBNET
+         10.0.1.0/24               10.0.3.0/24
+               |                       |
+          Web Server              NAT Gateway
+                                       |
+                                       v
+                                PRIVATE SUBNET
+                                 10.0.2.0/24
+                                       |
+                                App / Database
+```
+
+This is a simplified architecture.
+
+- The public web server receives permitted user requests.
+- The NAT Gateway allows private resources to initiate outbound internet connections.
+- The private application or database resources are not directly exposed to the public internet through a normal inbound route.
+- Route tables determine where traffic goes.
+- Security Groups control which traffic is permitted.
+
+For production systems, resources are commonly distributed across multiple Availability Zones to improve availability and resilience.
+
+---
+
+## 10. Quick Revision
+
+| Concept | Simple Meaning | Daily-Life Example |
+|---|---|---|
+| Protocol | Rules for communication | Postal delivery rules |
+| IP Address | Identifies a network destination | House address |
+| Port | Identifies an application or service | Apartment number |
+| Firewall | Controls network traffic | Security guard |
+| VPC | Isolated virtual network | Gated society |
+| Public Subnet | Subnet with a route to an Internet Gateway | Public-facing shop |
+| Private Subnet | Subnet for internal resources | Restricted residential area |
+| Internet Gateway | Connects a VPC to the internet | Main gate |
+| NAT Gateway | Enables private resources to initiate outbound internet connections | Authorized common service |
+| CIDR | Defines an IP address range | Dividing houses into blocks |
+| Route Table | Directs network traffic | Road directions |
+| Security Group | Allows or blocks traffic to resources | Entry permission rules |
