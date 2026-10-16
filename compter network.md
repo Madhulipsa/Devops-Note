@@ -313,3 +313,151 @@ Examples: IPv4, IPv6, ICMP
 Wi-Fi or Ethernet carries the data over the local network as signals and frames.
 
 Examples: Wi-Fi, Ethernet
+
+
+
+## Transport Layer — TCP and UDP
+
+The Transport Layer has two main types of protocols:
+
+1. TCP (Transmission Control Protocol)
+2. UDP (User Datagram Protocol)
+
+---
+
+### 1. TCP (Transmission Control Protocol)
+
+TCP works using a client-server model. It provides reliable data delivery between applications.
+
+#### TCP 3-Way Handshake
+
+Before transferring data, TCP establishes a connection between the client and the server.
+
+**Step 1: SYN**
+
+The client sends a SYN packet to the server to request a connection.
+
+**Step 2: SYN-ACK**
+
+The server sends a SYN-ACK packet back to the client to acknowledge the request and synchronize sequence numbers.
+
+**Step 3: ACK**
+
+The client sends an ACK packet to the server.
+
+Now, the TCP connection is established, and data transfer can begin.
+
+#### TCP 3-Way Handshake Diagram
+
+```text
+        CLIENT                              SERVER
+           |                                   |
+           | -------- SYN -------------------> |
+           |                                   |
+           | <------ SYN + ACK --------------- |
+           |                                   |
+           | -------- ACK -------------------> |
+           |                                   |
+           |       Connection Established      |
+           |                                   |
+           | <====== Data Transfer ==========> |
+```
+
+### Why Do We Use TCP?
+
+TCP provides reliable data delivery. It detects lost data and retransmits it when necessary, and it ensures that data is delivered in order to the receiving application.
+
+For example, when you send an email through Gmail, losing part of the message would be a problem. TCP helps provide reliable delivery of the data between network endpoints.
+
+### Protocols That Commonly Use TCP
+
+**1. HTTP (Hypertext Transfer Protocol)**
+
+HTTP is used to transfer web content between a client and a server. HTTP can use TCP.
+
+**2. HTTPS (Hypertext Transfer Protocol Secure)**
+
+HTTPS secures web communication using TLS. Traditional HTTP/1.1 and HTTP/2 over HTTPS commonly use TCP.
+
+**3. SMTP (Simple Mail Transfer Protocol)**
+
+SMTP is used to send and relay emails between mail clients and mail servers or between mail servers.
+
+For example, when you send an email saying "Hello, Sir!", SMTP can be used to send the email, while TCP provides reliable transport for the SMTP connection.
+
+**4. SSH (Secure Shell)**
+
+SSH is used to securely connect to and manage remote computers or servers. SSH commonly uses TCP.
+
+For example, a DevOps engineer can use SSH to connect to an AWS EC2 instance and manage it remotely.
+
+SSH commonly runs in the background of a terminal session while the engineer executes commands on the remote server.
+
+---
+
+### 2. UDP (User Datagram Protocol)
+
+UDP is another Transport Layer protocol. It allows applications to send data without establishing a connection first.
+
+Unlike TCP, UDP does not guarantee that packets will arrive, arrive in order, or be retransmitted if lost.
+
+#### How UDP Works
+
+- The client sends data to the server.
+- The server can receive the data without a TCP-style handshake.
+- Some packets may get lost during transmission.
+- UDP itself does not retransmit lost packets or guarantee delivery.
+
+Applications can implement their own reliability mechanisms if required.
+
+### What Happens When UDP Packets Are Lost?
+
+For example, imagine you are playing an online game.
+
+If a small update about a player's position is lost, the game may simply use the next update instead of waiting for the old one.
+
+UDP can be useful for real-time applications because avoiding delays may be more important than retransmitting every lost packet.
+
+### UDP Examples
+
+- Online gaming
+- Live audio and video
+- Real-time communication
+- DNS queries in many common configurations
+
+### Bandwidth, Latency, and Packet Loss
+
+**Bandwidth:** The amount of data a network can carry per second.
+
+**Latency:** The time it takes for data to travel from one endpoint to another.
+
+**Packet loss:** When data packets fail to reach their destination.
+
+Packet loss can affect both TCP and UDP. TCP may retransmit lost data, which can increase delays and network traffic. UDP does not retransmit lost packets by itself, so applications may experience missing data.
+
+Using more bandwidth does not automatically increase latency. However, network congestion can increase latency and packet loss.
+
+---
+
+### TCP vs UDP
+
+| Feature | TCP | UDP |
+|---|---|---|
+| Connection | Connection-oriented | Connectionless |
+| Handshake | 3-way handshake | No TCP-style handshake |
+| Reliability | Reliable delivery | No delivery guarantee by itself |
+| Packet ordering | Ordered delivery | No ordering guarantee |
+| Retransmission | Handles retransmission | No retransmission by itself |
+| Examples | HTTP/1.1, HTTP/2, SMTP, SSH | Online gaming, real-time media, DNS |
+
+### Quick Revision
+
+- **TCP:** Reliable and ordered data delivery.
+- **UDP:** Sends data without establishing a connection first.
+- **SYN:** Client requests a TCP connection.
+- **SYN-ACK:** Server acknowledges the request and responds.
+- **ACK:** Client acknowledges the server's response.
+- **SMTP:** Sends and relays emails.
+- **SSH:** Securely connects to remote servers.
+- **Latency:** Time taken for data to travel.
+- **Packet loss:** Data packets that fail to reach their destination.
