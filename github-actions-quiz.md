@@ -1,6 +1,6 @@
-# Batch 10 - GitHub Actions Quiz
+## GitHub Actions Quiz
 
-## Day 1 - GitHub Actions Fundamentals
+## GitHub Actions Fundamentals
 
 **1. What are GitHub Actions primarily used for?**
 
