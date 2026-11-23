@@ -69,3 +69,69 @@ A developer pushes a new feature. GitHub Actions builds the app and creates a Do
 - GitHub Actions automates the whole flow.
 - Docker packages the app into an image.
 - Tests act as a gate: fail means no deployment.
+
+
+ GitHub Actions: Workflow, Jobs, Steps and Actions
+ 
+## Simple Explanation
+GitHub Actions is the platform. Inside it, a **workflow** defines the whole pipeline. Each stage of the pipeline (build, test, deploy) is a **job**. Inside each job there are **steps**, and a step can use a **prebuilt action**.
+ 
+## Hierarchy
+```
+GitHub Actions (platform)
+└── Workflow            = one YAML file; the entire pipeline is defined here
+    ├── on:             = trigger (push, pull_request, ...)
+    ├── Job: build      = one stage
+    │     ├── Step 1: checkout code   (uses: actions/checkout@v4)   ← prebuilt Action
+    │     └── Step 2: docker build    (run: docker build ...)       ← your own command
+    ├── Job: test       = next stage
+    │     └── Steps ...
+    └── Job: deploy     = next stage
+          └── Steps ...
+```
+ 
+## Key Concepts
+- **Workflow:** A YAML file stored in `.github/workflows/`. The complete pipeline is defined inside it.
+- **Job:** Each stage (build, test, deploy) is a job. Every job runs on its own separate runner (VM).
+- **Step:** A small task inside a job. Steps run one after another, sequentially.
+- **Action (prebuilt):** A ready-made, reusable step called with `uses:`, for example `actions/checkout@v4`. To run your own command instead, use `run:`.
+## Execution Rules
+- Jobs run in **parallel** by default.
+- Use `needs:` to set the order (build, then test, then deploy).
+- Steps always run **sequentially** within a job.
+- Jobs run on different machines, so files are shared between them using **artifacts**.
+## YAML Example
+```yaml
+name: CI/CD Pipeline            # Workflow
+on: push                        # Trigger
+ 
+jobs:
+  build:                        # Job 1
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4          # Prebuilt action
+      - name: Build Docker image
+        run: docker build -t myapp .       # Your own command
+ 
+  test:                         # Job 2
+    needs: build                # Runs only after build succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: pytest
+ 
+  deploy:                       # Job 3
+    needs: test                 # Runs only if tests pass
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Deploying to server..."
+```
+ 
+## Quick Revision Summary
+- Workflow = the whole pipeline (one YAML file).
+- Job = one stage of the pipeline.
+- Step = a single task inside a job.
+- Action = a prebuilt, reusable step (`uses:`); `run:` is for your own commands.
+- Jobs are parallel by default; use `needs:` for order.
+ 
