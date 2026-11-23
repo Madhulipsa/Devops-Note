@@ -100,7 +100,7 @@ GitHub Actions (platform)
 - Use `needs:` to set the order (build, then test, then deploy).
 - Steps always run **sequentially** within a job.
 - Jobs run on different machines, so files are shared between them using **artifacts**.
-## YAML Example
+## YAML Example  ......key:value
 ```yaml
 name: CI/CD Pipeline            # Workflow
 on: push                        # Trigger
